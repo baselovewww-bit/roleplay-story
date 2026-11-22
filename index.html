@@ -797,3 +797,232 @@ navigator.clipboard.writeText(prompt)
 fallback();
 }
 }
+// ===== SESSION MANAGER =====
+
+data.sessions = data.sessions || [];
+data.activeSessions = data.activeSessions || {};
+
+function getCurrentSession(){
+    const workId = $('chatWork').value;
+    if(!workId) return null;
+
+    let sessionId = data.activeSessions[workId];
+    let session = data.sessions.find(s =>
+        s.id === sessionId && s.workId === workId
+    );
+
+    if(!session){
+        session = {
+            id: uid(),
+            workId,
+            name: 'メインストーリー',
+            created: Date.now()
+        };
+        data.sessions.push(session);
+        data.activeSessions[workId] = session.id;
+        save();
+    }
+
+    return session;
+}
+
+function createSession(){
+    const workId = $('chatWork').value;
+    if(!workId) return alert('作品を選択してください');
+
+    const name = prompt('新しいセッション名を入力してください');
+    if(!name || !name.trim()) return;
+
+    const session = {
+        id: uid(),
+        workId,
+        name: name.trim(),
+        created: Date.now()
+    };
+
+    data.sessions.push(session);
+    data.activeSessions[workId] = session.id;
+
+    save();
+    updateSessionUI();
+    renderMessages();
+}
+
+function switchSession(){
+    const workId = $('chatWork').value;
+    const id = $('sessionSelect').value;
+
+    data.activeSessions[workId] = id;
+
+    save();
+    renderMessages();
+}
+
+function renameSession(){
+    const session = getCurrentSession();
+    if(!session) return;
+
+    const name = prompt('新しいセッション名', session.name);
+    if(!name || !name.trim()) return;
+
+    session.name = name.trim();
+    save();
+    updateSessionUI();
+}
+
+function deleteSession(){
+    const session = getCurrentSession();
+    if(!session) return;
+
+    if(!confirm('このセッションを削除しますか？')) return;
+
+    data.messages = data.messages.filter(m =>
+        m.sessionId !== session.id
+    );
+
+    data.sessions = data.sessions.filter(s =>
+        s.id !== session.id
+    );
+
+    delete data.activeSessions[session.workId];
+
+    save();
+    updateSessionUI();
+    renderMessages();
+}
+
+function updateSessionUI(){
+    const workId = $('chatWork').value;
+    if(!workId) return;
+
+    const sessions = data.sessions.filter(s =>
+        s.workId === workId
+    );
+
+    const current = getCurrentSession();
+
+    const select = $('sessionSelect');
+    select.innerHTML = sessions.map(s =>
+        `<option value="${esc(s.id)}">${esc(s.name)}</option>`
+    ).join('');
+
+    if(current) select.value = current.id;
+}
+
+function setupSessionUI(){
+    if($('sessionPanel')) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'sessionPanel';
+    panel.className = 'card';
+    panel.style.margin = '15px 0';
+
+    panel.innerHTML = `
+        <h3>📚 ロールプレイセッション</h3>
+
+        <div class="field">
+            <label>会話セッション</label>
+            <select id="sessionSelect"></select>
+        </div>
+
+        <div class="actions">
+            <button class="primary" id="sessionNew">＋ 新規作成</button>
+            <button id="sessionRename">名前変更</button>
+            <button class="danger" id="sessionDelete">削除</button>
+        </div>
+    `;
+
+    $('chatBox').parentNode.insertBefore(
+        panel,
+        $('chatBox')
+    );
+
+    $('sessionSelect').onchange = switchSession;
+    $('sessionNew').onclick = createSession;
+    $('sessionRename').onclick = renameSession;
+    $('sessionDelete').onclick = deleteSession;
+}
+
+function sendChat(){
+    const workId = $('chatWork').value;
+    const text = $('chatInput').value.trim();
+
+    if(!workId || !text){
+        return alert('作品と会話内容を入力してください');
+    }
+
+    const session = getCurrentSession();
+
+    const selected = [...$('chatCharacters').selectedOptions];
+
+    if(selected.length){
+        selected.forEach(c => {
+            data.messages.push({
+                id: uid(),
+                workId,
+                sessionId: session.id,
+                characterId: c.value,
+                role: 'character',
+                text,
+                time: Date.now()
+            });
+        });
+    }else{
+        data.messages.push({
+            id: uid(),
+            workId,
+            sessionId: session.id,
+            role: 'user',
+            text,
+            time: Date.now()
+        });
+    }
+
+    $('chatInput').value = '';
+
+    save();
+    renderMessages();
+}
+
+function renderMessages(){
+    const workId = $('chatWork').value;
+    if(!workId) return;
+
+    const session = getCurrentSession();
+    if(!session) return;
+
+    const ids = [...$('chatCharacters').selectedOptions]
+        .map(x => x.value);
+
+    const messages = data.messages.filter(m =>
+        m.workId === workId &&
+        (!m.sessionId || m.sessionId === session.id) &&
+        (!ids.length || !m.characterId || ids.includes(m.characterId))
+    );
+
+    $('chatBox').innerHTML = messages.map(m => {
+        const c = data.characters.find(x =>
+            x.id === m.characterId
+        );
+
+        return `
+            <div class="message ${m.role === 'user' ? 'user' : ''}">
+                <small>${esc(c?.name || 'あなた')}</small>
+                ${esc(m.text)}
+            </div>
+        `;
+    }).join('') || '<p class="muted">会話履歴はありません。</p>';
+
+    $('chatBox').scrollTop = $('chatBox').scrollHeight;
+}
+
+const originalUpdateChatCharacters = updateChatCharacters;
+
+updateChatCharacters = function(){
+    originalUpdateChatCharacters();
+    setupSessionUI();
+    updateSessionUI();
+};
+
+setupSessionUI();
+updateSessionUI();
