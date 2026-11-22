@@ -1,0 +1,18 @@
+{
+  "name": "Roleplay Story - The Gothic Library",
+  "short_name": "Roleplay Story",
+  "lang": "ja",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0811",
+  "theme_color": "#100b19",
+  "description": "物語とキャラクターを保存するロールプレイノート",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
