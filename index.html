@@ -698,3 +698,102 @@ document.execCommand('copy');
 t.remove();
 alert('プロンプトをコピーしました！');
 }
+function copyRoleplayPrompt(){
+
+const workId=$('chatWork').value;
+if(!workId)return alert('作品を選択してください');
+
+const work=data.works.find(w=>w.id===workId);
+
+const characters=[...$('chatCharacters').selectedOptions]
+.map(o=>data.characters.find(c=>c.id===o.value))
+.filter(Boolean);
+
+if(!characters.length)return alert('キャラクターを選択してください');
+
+const chapters=data.chapters
+.filter(c=>c.workId===workId)
+.map(c=>`
+【第${c.chapterNumber}章・第${c.episodeNumber}話】
+タイトル：${c.title}
+本文：
+${c.body||'本文なし'}
+`).join('\n');
+
+const history=data.messages
+.filter(m=>m.workId===workId)
+.slice(-50)
+.map(m=>{
+const c=data.characters.find(x=>x.id===m.characterId);
+return `${m.role==='user'?'ユーザー':c?.name||'記録'}：${m.text}`;
+}).join('\n\n');
+
+const characterInfo=characters.map(c=>`
+名前：${c.name}
+年齢：${c.age}
+容姿：${c.appearance}
+性格：${c.personality}
+口調：${c.speech}
+過去：${c.background}
+人間関係：${c.relations}
+秘密・その他：${c.memo}
+`).join('\n');
+
+const prompt=`
+あなたはプロの夢小説家兼ロールプレイAIです。
+
+【作品タイトル】
+${work.name}
+
+【ジャンル】
+${work.genre}
+
+【世界観】
+${work.world}
+
+【作品設定】
+${work.memo}
+
+【登場キャラクター】
+${characterInfo}
+
+【これまでの物語】
+${chapters}
+
+【直近の会話履歴】
+${history}
+
+【絶対に守るルール】
+・キャラクターの性格、口調、人格を維持する。
+・過去の出来事や関係性を忘れない。
+・物語の時系列を守る。
+・ユーザーの台詞や行動を勝手に決めない。
+・自然な会話と臨場感のある情景描写を行う。
+・複数キャラクターの個性を区別する。
+・勝手に物語をリセットしない。
+・過去の設定と矛盾させない。
+
+【今回の目的】
+前回の会話の直後から物語を再開する。
+説明や設定の再確認は不要。
+キャラクターとして自然に話しかけること。
+`;
+
+const fallback=()=>{
+const t=document.createElement('textarea');
+t.value=prompt;
+document.body.appendChild(t);
+t.select();
+document.execCommand('copy');
+t.remove();
+alert('引き継ぎデータをコピーしました！');
+};
+
+if(navigator.clipboard?.writeText){
+navigator.clipboard.writeText(prompt)
+.then(()=>alert('引き継ぎデータをコピーしました！'))
+.catch(fallback);
+}else{
+fallback();
+}
+}
