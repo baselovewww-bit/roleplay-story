@@ -1,706 +1,604 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#100b18">
-<title>Gothic Library</title>
+<title>GOTHIC LIBRARY</title>
 <style>
-:root {
-  --bg:#100b18;
-  --panel:#1b1425;
-  --panel2:#241a31;
-  --purple:#79509a;
-  --gold:#c5a76a;
-  --text:#eee7f2;
-  --muted:#a99caf;
-  --border:#493552;
-  --danger:#b85b70;
+:root{
+--bg:#100b18;--panel:#21182c;--panel2:#2c2039;
+--gold:#c5a76a;--purple:#79509a;--text:#eee7f2;
+--muted:#a99caf;--border:#493552;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;
-  line-height:1.65;
+margin:0;background:var(--bg);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+line-height:1.7;
 }
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.app{max-width:900px;margin:auto;padding:18px 15px 60px}
-header{text-align:center;padding:28px 5px 24px;border-bottom:1px solid var(--border)}
-.sigil{color:var(--gold);letter-spacing:5px;font-size:11px}
-header h1{font-family:Georgia,serif;font-size:clamp(27px,7vw,42px);letter-spacing:3px;margin:10px 0}
-header p{color:var(--muted);font-size:12px;letter-spacing:2px}
-nav{display:flex;gap:7px;overflow-x:auto;padding:18px 0}
-nav button{
-  flex:0 0 auto;border:1px solid var(--border);border-radius:30px;
-  background:transparent;color:var(--muted);padding:11px 17px;min-height:46px;
+.app{max-width:1000px;margin:auto;padding:15px}
+header{text-align:center;padding:28px;border-bottom:1px solid var(--border)}
+header h1{font-family:Georgia;font-size:36px;letter-spacing:4px}
+header p,.muted{color:var(--muted);font-size:13px}
+nav{display:flex;gap:7px;overflow-x:auto;padding:15px 0;position:sticky;top:0;background:var(--bg);z-index:5}
+button{
+background:var(--panel2);color:var(--text);
+border:1px solid var(--border);border-radius:20px;
+padding:10px 15px;cursor:pointer;font-size:14px;
 }
-nav button.active{background:var(--purple);color:white;border-color:var(--purple)}
+button.primary{background:#53366b;border-color:var(--gold)}
+button.danger{color:#ff9eae}
+input,textarea,select{
+width:100%;padding:12px;background:#100c17;
+border:1px solid var(--border);border-radius:9px;
+color:var(--text);font:inherit;
+}
+textarea{min-height:120px;resize:vertical}
+label{color:var(--gold);font-size:13px}
+.field{margin:13px 0;display:grid;gap:6px}
 .section{display:none}
 .section.active{display:block}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0}
-h2{font-family:Georgia,serif;font-size:25px;font-weight:normal;margin:0}
-h3{font-size:17px;margin:0 0 8px}
-.muted{color:var(--muted);font-size:13px}
-.gold{color:var(--gold)}
-.btn{
-  border:1px solid var(--border);border-radius:25px;
-  background:var(--panel2);color:var(--text);
-  padding:10px 15px;min-height:44px;
-}
-.btn.primary{background:#53366b;border-color:#9870b2}
-.btn.danger{color:#ffb7c3;border-color:#75404e}
-.btn.small{padding:6px 11px;min-height:38px;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
-.card{
-  background:linear-gradient(145deg,#21182c,#17111f);
-  border:1px solid var(--border);border-radius:17px;padding:17px;
-  min-width:0;overflow-wrap:anywhere;
-}
-.card p{margin:7px 0;color:var(--muted);font-size:14px}
-.card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
-.empty{
-  border:1px dashed var(--border);border-radius:16px;
-  padding:30px 15px;text-align:center;color:var(--muted)
-}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0}
-.stat{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
-.stat strong{display:block;font:28px Georgia;color:var(--gold)}
-.stat span{font-size:12px;color:var(--muted)}
-.field{display:grid;gap:5px;margin:12px 0}
-label{font-size:13px;color:var(--gold)}
-input,textarea,select{
-  width:100%;background:#100c17;color:var(--text);
-  border:1px solid var(--border);border-radius:10px;padding:11px;
-  min-height:44px;
-}
-textarea{min-height:110px;resize:vertical}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--purple)}
-.modal{
-  display:none;position:fixed;inset:0;background:#000b;
-  z-index:10;overflow-y:auto;padding:20px 12px;
-}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0}
+h2{font-family:Georgia;font-weight:normal}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;overflow-wrap:anywhere}
+.card p{font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.small{font-size:12px;padding:7px 10px}
+.empty{padding:25px;text-align:center;border:1px dashed var(--border);color:var(--muted);border-radius:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}
+.stat{background:var(--panel);padding:12px;border-radius:10px;text-align:center}
+.stat strong{display:block;color:var(--gold);font-size:26px}
+.editor{min-height:55vh;line-height:1.9}
+.chatbox{background:#0b0810;border:1px solid var(--border);padding:12px;border-radius:12px;min-height:180px;max-height:45vh;overflow:auto}
+.message{padding:10px;margin:8px 0;background:var(--panel2);border-radius:10px;white-space:pre-wrap}
+.message.user{margin-left:10%;background:#49345e}
+.portrait{max-width:100%;max-height:180px;object-fit:cover;border-radius:10px}
+.modal{display:none;position:fixed;inset:0;background:#000c;z-index:10;overflow:auto;padding:15px}
 .modal.open{display:block}
-.modal-box{
-  max-width:600px;margin:30px auto;background:var(--panel);
-  border:1px solid var(--border);border-radius:18px;padding:20px;
-}
-.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-#editor{min-height:48vh;font-size:16px;line-height:1.9}
-.chat-box{
-  background:#0d0913;border:1px solid var(--border);
-  border-radius:14px;padding:12px;min-height:180px;max-height:45vh;
-  overflow-y:auto;margin:12px 0;
-}
-.message{padding:10px 12px;border-radius:12px;margin:8px 0;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere}
-.message.user{margin-left:auto;background:#49345e}
-.message.character{background:#292033}
-.message small{display:block;color:#c6b5ce;font-size:11px;margin-bottom:4px}
-hr{border:0;border-top:1px solid var(--border);margin:20px 0}
-footer{text-align:center;color:var(--muted);font-size:11px;margin-top:40px;letter-spacing:2px}
+.modalbox{max-width:650px;margin:25px auto;background:var(--panel);padding:20px;border:1px solid var(--gold);border-radius:15px}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:11px}
 @media(max-width:480px){
- .app{padding:12px 12px 45px}
- .section-head{align-items:flex-start;flex-wrap:wrap}
- .stats{gap:6px}
- .stat{padding:10px}
- .stat strong{font-size:24px}
+header h1{font-size:27px}
+.head{align-items:flex-start;flex-wrap:wrap}
 }
 </style>
 </head>
 <body>
 <div class="app">
+
 <header>
-  <div class="sigil">✦ THE GOTHIC LIBRARY ✦</div>
-  <h1>ROLEPLAY STORY</h1>
-  <p>YOUR CHARACTERS · YOUR WORLD · YOUR STORY</p>
+<div style="color:var(--gold);letter-spacing:5px">✦ THE GOTHIC LIBRARY ✦</div>
+<h1>ROLEPLAY STORY</h1>
+<p>YOUR CHARACTERS · YOUR WORLD · YOUR STORY</p>
 </header>
 
-<nav aria-label="メインメニュー">
-  <button class="active" data-tab="home">書庫</button>
-  <button data-tab="works">作品</button>
-  <button data-tab="characters">人物</button>
-  <button data-tab="chapters">章・話</button>
-  <button data-tab="writer">執筆室</button>
-  <button data-tab="chat">会話履歴</button>
-  <button data-tab="settings">設定</button>
+<nav>
+<button class="active" data-tab="home">書庫</button>
+<button data-tab="works">作品</button>
+<button data-tab="characters">人物</button>
+<button data-tab="chapters">章・話</button>
+<button data-tab="writer">執筆室</button>
+<button data-tab="chat">会話ログ</button>
+<button data-tab="settings">設定</button>
 </nav>
 
 <section id="home" class="section active">
-  <div class="section-head">
-    <div><h2>Welcome to the Library</h2><p class="muted">物語とキャラクターを管理しましょう。</p></div>
-    <button class="btn primary" onclick="newWork()">＋ 新しい作品</button>
-  </div>
-  <div class="stats">
-    <div class="stat"><span>作品</span><strong id="statWorks">0</strong></div>
-    <div class="stat"><span>キャラクター</span><strong id="statChars">0</strong></div>
-    <div class="stat"><span>章・エピソード</span><strong id="statChapters">0</strong></div>
-  </div>
-  <h2>Recently Opened</h2>
-  <div id="recentWorks" class="grid" style="margin-top:13px"></div>
+<div class="head">
+<h2>Welcome to the Library</h2>
+<button class="primary" onclick="newWork()">＋ 新しい作品</button>
+</div>
+<div class="stats">
+<div class="stat">作品<strong id="statWorks">0</strong></div>
+<div class="stat">人物<strong id="statChars">0</strong></div>
+<div class="stat">章・話<strong id="statChapters">0</strong></div>
+</div>
+<h2>Recently Updated</h2>
+<div id="recentWorks" class="grid"></div>
 </section>
 
 <section id="works" class="section">
-  <div class="section-head">
-    <h2>My Stories</h2>
-    <button class="btn primary" onclick="newWork()">＋ 作品を作成</button>
-  </div>
-  <div id="worksList" class="grid"></div>
+<div class="head">
+<h2>My Stories</h2>
+<button class="primary" onclick="newWork()">＋ 作品作成</button>
+</div>
+<div id="worksList" class="grid"></div>
 </section>
 
 <section id="characters" class="section">
-  <div class="section-head">
-    <h2>Characters</h2>
-    <button class="btn primary" onclick="newCharacter()">＋ 人物を作成</button>
-  </div>
-  <div id="charactersList" class="grid"></div>
+<div class="head">
+<h2>Characters</h2>
+<button class="primary" onclick="newCharacter()">＋ 人物登録</button>
+</div>
+<div id="charactersList" class="grid"></div>
 </section>
 
 <section id="chapters" class="section">
-  <div class="section-head">
-    <h2>Chapters & Episodes</h2>
-    <button class="btn primary" onclick="newChapter()">＋ 章・話を作成</button>
-  </div>
-  <div class="field">
-    <label for="chapterFilter">作品で絞り込み</label>
-    <select id="chapterFilter"><option value="">すべての作品</option></select>
-  </div>
-  <div id="chaptersList" class="grid"></div>
+<div class="head">
+<h2>Chapters & Episodes</h2>
+<button class="primary" onclick="newChapter()">＋ 章・話作成</button>
+</div>
+<div class="field">
+<label>作品で絞り込み</label>
+<select id="chapterFilter"><option value="">すべて</option></select>
+</div>
+<div id="chaptersList" class="grid"></div>
 </section>
 
 <section id="writer" class="section">
-  <div class="section-head"><h2>Writing Room</h2></div>
-  <div class="field">
-    <label for="writeWork">作品</label>
-    <select id="writeWork"></select>
-  </div>
-  <div class="field">
-    <label for="writeChapter">章・エピソード</label>
-    <select id="writeChapter"></select>
-  </div>
-  <div class="field">
-    <label for="editorTitle">タイトル</label>
-    <input id="editorTitle" placeholder="物語のタイトル">
-  </div>
-  <div class="field">
-    <label for="editor">本文</label>
-    <textarea id="editor" placeholder="ここから物語を書き始めましょう……"></textarea>
-  </div>
-  <div class="toolbar">
-    <button class="btn primary" onclick="saveWriting()">本文を保存</button>
-    <span id="saveStatus" class="muted" aria-live="polite"></span>
-  </div>
-  <p class="muted">※入力内容は自動保存されます。作品と章を選択して執筆してください。</p>
+<div class="head">
+<h2>Writing Room</h2>
+<button onclick="newChapterFromWriter()">＋ 新しい話</button>
+</div>
+<div class="field">
+<label>作品</label>
+<select id="writeWork"></select>
+</div>
+<div class="field">
+<label>章・エピソード</label>
+<select id="writeChapter"></select>
+</div>
+<div class="field">
+<label>タイトル</label>
+<input id="editorTitle" placeholder="タイトル">
+</div>
+<div class="field">
+<label>本文</label>
+<textarea id="editor" class="editor" placeholder="ここから物語を書き始めましょう……"></textarea>
+</div>
+<button class="primary" onclick="saveWriting()">本文を保存</button>
+<span id="saveStatus" class="muted"></span>
 </section>
 
 <section id="chat" class="section">
-  <div class="section-head"><h2>Roleplay Chat</h2></div>
-  <div class="field">
-    <label for="chatWork">作品</label>
-    <select id="chatWork"></select>
-  </div>
-  <div class="field">
-    <label for="chatCharacter">相手のキャラクター</label>
-    <select id="chatCharacter"></select>
-  </div>
-  <div id="chatBox" class="chat-box"></div>
-  <div class="field">
-    <label for="chatMode">投稿者</label>
-    <select id="chatMode">
-      <option value="user">あなた</option>
-      <option value="character">キャラクター</option>
-      <option value="note">メモ</option>
-    </select>
-  </div>
-  <div class="field">
-    <label for="chatInput">メッセージ</label>
-    <textarea id="chatInput" placeholder="会話やロールプレイの文章を記録……"></textarea>
-  </div>
-  <button class="btn primary" onclick="sendChat()">会話を記録</button>
-  <button class="btn" onclick="exportChat()">会話を書き出す</button>
+<h2>Roleplay Log</h2>
+<div class="field">
+<label>作品</label>
+<select id="chatWork"></select>
+</div>
+<div class="field">
+<label>会話相手（複数選択可）</label>
+<select id="chatCharacters" multiple size="4"></select>
+</div>
+<div id="chatBox" class="chatbox"></div>
+<div class="field">
+<label>会話内容</label>
+<textarea id="chatInput" placeholder="会話や出来事を記録……"></textarea>
+</div>
+<button class="primary" onclick="sendChat()">ログに追加</button>
+<button onclick="exportChat()">会話を書き出す</button>
+<p class="muted">ここは会話履歴の保存機能です。AIによる自動応答は別途接続が必要です。</p>
 </section>
 
 <section id="settings" class="section">
-  <div class="section-head"><h2>Library Settings</h2></div>
-  <div class="card">
-    <h3>データのバックアップ</h3>
-    <p>作品・人物・章・本文・会話履歴をJSONファイルに保存します。</p>
-    <div class="toolbar">
-      <button class="btn primary" onclick="backup()">バックアップを保存</button>
-      <button class="btn" onclick="document.getElementById('restoreFile').click()">バックアップを復元</button>
-      <input id="restoreFile" type="file" accept=".json,application/json" hidden>
-    </div>
-  </div>
-  <hr>
-  <div class="card">
-    <h3>保存について</h3>
-    <p>データはこのブラウザ内に保存されます。ブラウザのデータ消去や端末変更に備えて、定期的にバックアップしてください。</p>
-  </div>
-  <hr>
-  <button class="btn danger" onclick="clearAll()">すべてのデータを削除</button>
+<h2>Library Settings</h2>
+<div class="card">
+<h3>データバックアップ</h3>
+<p>作品・人物・章・本文・会話履歴を保存できます。</p>
+<button class="primary" onclick="backup()">バックアップ保存</button>
+<button onclick="document.getElementById('restoreFile').click()">復元</button>
+<input type="file" id="restoreFile" accept=".json" hidden>
+</div>
+<br>
+<div class="card">
+<h3>保存について</h3>
+<p>データはブラウザ内に保存されます。定期的にバックアップしてください。</p>
+</div>
+<br>
+<button class="danger" onclick="clearAll()">すべて削除</button>
 </section>
 
 <footer>✦ A PRIVATE LIBRARY FOR YOUR IMAGINATION ✦</footer>
 </div>
 
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-box">
-    <h2 id="modalTitle">登録</h2>
-    <form id="modalForm">
-      <div id="modalFields"></div>
-      <div class="modal-actions">
-        <button type="button" class="btn" onclick="closeModal()">キャンセル</button>
-        <button type="submit" class="btn primary">保存する</button>
-      </div>
-    </form>
-  </div>
+<div id="modal" class="modal">
+<div class="modalbox">
+<h2 id="modalTitle">登録</h2>
+<form id="modalForm">
+<div id="modalFields"></div>
+<div class="actions">
+<button type="button" onclick="closeModal()">キャンセル</button>
+<button class="primary">保存する</button>
+</div>
+</form>
+</div>
 </div>
 
 <script>
-"use strict";
+'use strict';
 
-const STORAGE_KEY = "gothic-library-v2";
+const KEY='gothic-library-v4';
+const empty=()=>({works:[],characters:[],chapters:[],messages:[]});
 
-const emptyData = () => ({
-  works: [],
-  characters: [],
-  chapters: [],
-  messages: []
+function load(){
+try{
+let d=JSON.parse(localStorage.getItem(KEY));
+if(d)return d;
+let old=JSON.parse(localStorage.getItem('gothic-library-v3')||localStorage.getItem('gothic-library-v2'));
+if(old)return old;
+}catch(e){}
+return empty();
+}
+
+let data=load();
+let editing=null;
+let timer=null;
+
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+
+function save(){
+try{
+localStorage.setItem(KEY,JSON.stringify(data));
+return true;
+}catch(e){
+alert('保存できません。容量を確認してください。');
+return false;
+}
+}
+
+function esc(v){
+return String(v??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+}
+
+function showTab(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));
+document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+refresh();
+window.scrollTo(0,0);
+}
+
+document.querySelectorAll('nav button').forEach(b=>{
+b.onclick=()=>showTab(b.dataset.tab);
 });
 
-let data = loadData();
-let editing = null;
-let currentEditorId = "";
-let autoSaveTimer = null;
-
-function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return emptyData();
-    const parsed = JSON.parse(raw);
-    return {
-      works:Array.isArray(parsed.works)?parsed.works:[],
-      characters:Array.isArray(parsed.characters)?parsed.characters:[],
-      chapters:Array.isArray(parsed.chapters)?parsed.chapters:[],
-      messages:Array.isArray(parsed.messages)?parsed.messages:[]
-    };
-  }catch(error){
-    alert("保存データを読み込めませんでした。バックアップファイルがあれば復元してください。");
-    return emptyData();
-  }
+function field(name,label,value='',type='text'){
+return `<div class="field"><label>${label}</label><input name="${name}" type="${type}" value="${esc(value)}"></div>`;
 }
 
-function saveData(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-    return true;
-  }catch(error){
-    alert("保存できませんでした。端末の空き容量やブラウザ設定を確認してください。");
-    return false;
-  }
+function area(name,label,value=''){
+return `<div class="field"><label>${label}</label><textarea name="${name}">${esc(value)}</textarea></div>`;
 }
 
-function uid(){
-  return "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2,9);
+function selectField(name,label,items,selected=''){
+return `<div class="field"><label>${label}</label>
+<select name="${name}">
+<option value="">選択してください</option>
+${items.map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${esc(x.name)}</option>`).join('')}
+</select></div>`;
 }
 
-function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-
-function byId(id){
-  return document.getElementById(id);
-}
-
-function showTab(tab){
-  const target = byId(tab);
-  if(!target) return;
-  document.querySelectorAll(".section").forEach(el=>el.classList.remove("active"));
-  target.classList.add("active");
-  document.querySelectorAll("nav button").forEach(btn=>{
-    btn.classList.toggle("active",btn.dataset.tab===tab);
-  });
-  refresh();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-document.querySelectorAll("nav button").forEach(btn=>{
-  btn.addEventListener("click",()=>showTab(btn.dataset.tab));
-});
-
-function openModal(title,fields,onSave){
-  byId("modalTitle").textContent=title;
-  byId("modalFields").innerHTML=fields;
-  byId("modal").classList.add("open");
-  editing=onSave;
+function openModal(title,html,callback){
+$('modalTitle').textContent=title;
+$('modalFields').innerHTML=html;
+$('modal').classList.add('open');
+editing=callback;
 }
 
 function closeModal(){
-  byId("modal").classList.remove("open");
-  byId("modalFields").innerHTML="";
-  editing=null;
+$('modal').classList.remove('open');
+editing=null;
 }
 
-byId("modal").addEventListener("click",e=>{
-  if(e.target===byId("modal")) closeModal();
-});
-
-byId("modalForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  if(typeof editing!=="function") return;
-  const values={};
-  byId("modalFields").querySelectorAll("[name]").forEach(el=>{
-    values[el.name]=el.value.trim();
-  });
-  editing(values);
-  closeModal();
-  refresh();
-});
-
-function field(name,label,value="",type="text",placeholder=""){
-  return `<div class="field">
-    <label for="f-${name}">${esc(label)}</label>
-    <input id="f-${name}" name="${name}" type="${type}"
-      value="${esc(value)}" placeholder="${esc(placeholder)}">
-  </div>`;
-}
-
-function area(name,label,value="",placeholder=""){
-  return `<div class="field">
-    <label for="f-${name}">${esc(label)}</label>
-    <textarea id="f-${name}" name="${name}" placeholder="${esc(placeholder)}">${esc(value)}</textarea>
-  </div>`;
-}
-
-function selectField(name,label,items,selected=""){
-  return `<div class="field">
-    <label for="f-${name}">${esc(label)}</label>
-    <select id="f-${name}" name="${name}">
-      <option value="">選択してください</option>
-      ${items.map(x=>`<option value="${esc(x.id)}" ${x.id===selected?"selected":""}>${esc(x.name)}</option>`).join("")}
-    </select>
-  </div>`;
-}
+$('modalForm').onsubmit=e=>{
+e.preventDefault();
+if(!editing)return;
+let v={};
+$('modalFields').querySelectorAll('[name]').forEach(x=>v[x.name]=x.value.trim());
+editing(v);
+closeModal();
+refresh();
+};
 
 function newWork(id=null){
-  const old=id?data.works.find(x=>x.id===id):null;
-  const fields=
-    field("name","作品タイトル",old?.name||"","text","作品名")+
-    field("genre","ジャンル",old?.genre||"","text","夢小説・恋愛・ファンタジーなど")+
-    field("world","世界観",old?.world||"","text","物語の舞台")+
-    area("memo","作品メモ",old?.memo||"","あらすじや設定など");
-  openModal(old?"作品を編集":"新しい作品",fields,v=>{
-    if(!v.name){alert("作品タイトルを入力してください。");return;}
-    if(old) Object.assign(old,v,{updated:Date.now()});
-    else data.works.push({id:uid(),...v,created:Date.now(),updated:Date.now()});
-    saveData();
-  });
+let o=data.works.find(x=>x.id===id);
+openModal(o?'作品編集':'新しい作品',
+field('name','作品タイトル',o?.name)+
+field('genre','ジャンル',o?.genre)+
+area('world','世界観・舞台',o?.world)+
+area('memo','作品メモ',o?.memo),
+v=>{
+if(!v.name)return alert('タイトルを入力してください');
+if(o)Object.assign(o,v,{updated:Date.now()});
+else data.works.push({id:uid(),...v,created:Date.now()});
+save();
+});
 }
 
 function newCharacter(id=null){
-  const old=id?data.characters.find(x=>x.id===id):null;
-  const fields=
-    selectField("workId","所属作品",data.works.map(w=>({id:w.id,name:w.name})),old?.workId||"")+
-    field("name","名前",old?.name||"")+
-    field("age","年齢",old?.age||"")+
-    area("appearance","容姿",old?.appearance||"")+
-    area("personality","性格",old?.personality||"")+
-    area("speech","口調・話し方",old?.speech||"")+
-    area("relations","人間関係",old?.relations||"")+
-    area("memo","その他の設定",old?.memo||"");
-  openModal(old?"人物を編集":"新しい人物",fields,v=>{
-    if(!v.name){alert("名前を入力してください。");return;}
-    if(old) Object.assign(old,v);
-    else data.characters.push({id:uid(),...v,created:Date.now()});
-    saveData();
-  });
+let o=data.characters.find(x=>x.id===id);
+openModal(o?'人物編集':'人物登録',
+selectField('workId','所属作品',data.works.map(w=>({id:w.id,name:w.name})),o?.workId)+
+field('name','名前',o?.name)+
+field('age','年齢',o?.age)+
+area('appearance','容姿',o?.appearance)+
+area('personality','性格',o?.personality)+
+area('speech','口調・話し方',o?.speech)+
+area('background','過去・生い立ち',o?.background)+
+area('relations','人間関係',o?.relations)+
+area('memo','秘密・その他の設定',o?.memo),
+v=>{
+if(!v.name)return alert('名前を入力してください');
+if(o)Object.assign(o,v);
+else data.characters.push({id:uid(),...v});
+save();
+});
 }
 
 function newChapter(id=null){
-  const old=id?data.chapters.find(x=>x.id===id):null;
-  const fields=
-    selectField("workId","作品",data.works.map(w=>({id:w.id,name:w.name})),old?.workId||"")+
-    field("chapterNumber","章番号",old?.chapterNumber||"1","number")+
-    field("episodeNumber","話数",old?.episodeNumber||"1","number")+
-    field("title","章・エピソードのタイトル",old?.title||"")+
-    area("body","本文",old?.body||"","本文を入力できます。");
-  openModal(old?"章・話を編集":"新しい章・話",fields,v=>{
-    if(!v.workId){alert("作品を選択してください。");return;}
-    if(!v.title){alert("タイトルを入力してください。");return;}
-    if(old) Object.assign(old,v,{updated:Date.now()});
-    else data.chapters.push({id:uid(),...v,created:Date.now(),updated:Date.now()});
-    saveData();
-  });
+let o=data.chapters.find(x=>x.id===id);
+openModal(o?'章・話編集':'章・話作成',
+selectField('workId','所属作品',data.works.map(w=>({id:w.id,name:w.name})),o?.workId)+
+field('chapterNumber','章番号',o?.chapterNumber||'1','number')+
+field('episodeNumber','話数',o?.episodeNumber||'1','number')+
+field('title','タイトル',o?.title)+
+area('body','本文',o?.body),
+v=>{
+if(!v.workId||!v.title)return alert('作品とタイトルを入力してください');
+if(o)Object.assign(o,v,{updated:Date.now()});
+else data.chapters.push({id:uid(),...v,created:Date.now()});
+save();
+});
 }
 
-function removeItem(type,id){
-  if(!confirm("このデータを削除しますか？この操作は取り消せません。")) return;
-  if(type==="works"){
-    data.works=data.works.filter(x=>x.id!==id);
-    data.characters=data.characters.filter(x=>x.workId!==id);
-    data.chapters=data.chapters.filter(x=>x.workId!==id);
-    data.messages=data.messages.filter(x=>x.workId!==id);
-  }else if(type==="characters"){
-    data.characters=data.characters.filter(x=>x.id!==id);
-  }else if(type==="chapters"){
-    data.chapters=data.chapters.filter(x=>x.id!==id);
-  }
-  saveData();
-  refresh();
+function newChapterFromWriter(){
+let w=$('writeWork').value;
+if(!w)return alert('先に作品を選んでください');
+openModal('新しい話',
+field('chapterNumber','章番号','1','number')+
+field('episodeNumber','話数','1','number')+
+field('title','タイトル'),
+v=>{
+if(!v.title)return alert('タイトルを入力してください');
+let c={id:uid(),workId:w,chapterNumber:v.chapterNumber||'1',episodeNumber:v.episodeNumber||'1',title:v.title,body:''};
+data.chapters.push(c);
+save();
+refresh();
+$('writeWork').value=w;
+updateChapters();
+$('writeChapter').value=c.id;
+loadWriting();
+});
 }
 
 function workName(id){
-  return data.works.find(x=>x.id===id)?.name||"所属作品なし";
+return data.works.find(w=>w.id===id)?.name||'未設定';
+}
+
+function removeItem(type,id){
+if(!confirm('削除しますか？'))return;
+if(type==='works'){
+data.works=data.works.filter(x=>x.id!==id);
+data.characters=data.characters.filter(x=>x.workId!==id);
+data.chapters=data.chapters.filter(x=>x.workId!==id);
+data.messages=data.messages.filter(x=>x.workId!==id);
+}else{
+data[type]=data[type].filter(x=>x.id!==id);
+}
+save();
+refresh();
 }
 
 function workCard(w){
-  const count=data.chapters.filter(c=>c.workId===w.id).length;
-  const chars=data.characters.filter(c=>c.workId===w.id).length;
-  return `<article class="card">
-    <h3>${esc(w.name)}</h3>
-    <span class="muted">${esc(w.genre||"ジャンル未設定")}</span>
-    <p>${esc(w.world||"世界観未設定")}</p>
-    <p>人物 ${chars}名 · 章・話 ${count}件</p>
-    <div class="card-actions">
-      <button class="btn small primary" onclick="openWriting('${w.id}')">執筆する</button>
-      <button class="btn small" onclick="newWork('${w.id}')">編集</button>
-      <button class="btn small danger" onclick="removeItem('works','${w.id}')">削除</button>
-    </div>
-  </article>`;
+return `<div class="card">
+<h3>${esc(w.name)}</h3>
+<p>${esc(w.genre||'ジャンル未設定')}</p>
+<p>${esc(w.world||'')}</p>
+<p>人物 ${data.characters.filter(c=>c.workId===w.id).length}名 / 話 ${data.chapters.filter(c=>c.workId===w.id).length}件</p>
+<div class="actions">
+<button class="primary small" onclick="openWriting('${w.id}')">執筆する</button>
+<button class="small" onclick="newWork('${w.id}')">編集</button>
+<button class="danger small" onclick="removeItem('works','${w.id}')">削除</button>
+</div></div>`;
 }
 
 function characterCard(c){
-  return `<article class="card">
-    <h3>${esc(c.name)}</h3>
-    <span class="muted">${esc(workName(c.workId))}</span>
-    <p>年齢：${esc(c.age||"未設定")}</p>
-    <p>${esc(c.personality||"性格未設定")}</p>
-    <div class="card-actions">
-      <button class="btn small" onclick="newCharacter('${c.id}')">編集</button>
-      <button class="btn small danger" onclick="removeItem('characters','${c.id}')">削除</button>
-    </div>
-  </article>`;
+return `<div class="card">
+<h3>${esc(c.name)}</h3>
+<p>${esc(workName(c.workId))}</p>
+<p>年齢：${esc(c.age||'未設定')}</p>
+<p>性格：${esc(c.personality||'未設定')}</p>
+<p>口調：${esc(c.speech||'未設定')}</p>
+<button class="small" onclick="newCharacter('${c.id}')">編集</button>
+<button class="danger small" onclick="removeItem('characters','${c.id}')">削除</button>
+</div>`;
 }
 
 function chapterCard(c){
-  return `<article class="card">
-    <h3>${esc(c.title)}</h3>
-    <span class="muted">${esc(workName(c.workId))}</span>
-    <p>第${esc(c.chapterNumber||"1")}章 · 第${esc(c.episodeNumber||"1")}話</p>
-    <p>${esc((c.body||"本文はまだありません。").slice(0,90))}</p>
-    <div class="card-actions">
-      <button class="btn small primary" onclick="openWriting('${c.workId}','${c.id}')">執筆する</button>
-      <button class="btn small" onclick="newChapter('${c.id}')">編集</button>
-      <button class="btn small danger" onclick="removeItem('chapters','${c.id}')">削除</button>
-    </div>
-  </article>`;
+return `<div class="card">
+<h3>${esc(c.title)}</h3>
+<p>${esc(workName(c.workId))}</p>
+<p>第${esc(c.chapterNumber)}章・第${esc(c.episodeNumber)}話</p>
+<p>${esc((c.body||'本文なし').slice(0,100))}</p>
+<button class="primary small" onclick="openWriting('${c.workId}','${c.id}')">執筆する</button>
+<button class="small" onclick="newChapter('${c.id}')">編集</button>
+<button class="danger small" onclick="removeItem('chapters','${c.id}')">削除</button>
+</div>`;
 }
 
-function fillSelect(id,items,placeholder,selected=""){
-  const el=byId(id);
-  if(!el) return;
-  const old=selected||el.value;
-  el.innerHTML=`<option value="">${esc(placeholder)}</option>`+
-    items.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("");
-  if(items.some(x=>x.id===old)) el.value=old;
+function fillSelect(id,items,placeholder){
+let el=$(id),old=el.value;
+el.innerHTML=`<option value="">${placeholder}</option>`+
+items.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');
+if(items.some(x=>x.id===old))el.value=old;
 }
 
 function refresh(){
-  byId("statWorks").textContent=data.works.length;
-  byId("statChars").textContent=data.characters.length;
-  byId("statChapters").textContent=data.chapters.length;
+$('statWorks').textContent=data.works.length;
+$('statChars').textContent=data.characters.length;
+$('statChapters').textContent=data.chapters.length;
 
-  byId("worksList").innerHTML=data.works.length?
-    data.works.map(workCard).join(""):'<div class="empty">作品を作成すると、ここに並びます。</div>';
+$('worksList').innerHTML=data.works.map(workCard).join('')||'<div class="empty">作品はまだありません</div>';
 
-  byId("recentWorks").innerHTML=data.works.length?
-    [...data.works].slice(-4).reverse().map(workCard).join(""):'<div class="empty">まだ作品がありません。</div>';
+$('recentWorks').innerHTML=[...data.works].reverse().slice(0,4).map(workCard).join('')||'<div class="empty">作品を作成してください</div>';
 
-  byId("charactersList").innerHTML=data.characters.length?
-    data.characters.map(characterCard).join(""):'<div class="empty">人物を登録しましょう。</div>';
+$('charactersList').innerHTML=data.characters.map(characterCard).join('')||'<div class="empty">人物はまだいません</div>';
 
-  const filter=byId("chapterFilter").value;
-  fillSelect("chapterFilter",data.works.map(w=>({id:w.id,name:w.name})),"すべての作品",filter);
-  const filtered=data.chapters.filter(c=>!byId("chapterFilter").value||c.workId===byId("chapterFilter").value);
-  byId("chaptersList").innerHTML=filtered.length?
-    filtered.map(chapterCard).join(""):'<div class="empty">章・エピソードはまだありません。</div>';
+let filter=$('chapterFilter').value;
+fillSelect('chapterFilter',data.works.map(w=>({id:w.id,name:w.name})),'すべて');
+$('chapterFilter').value=filter;
 
-  fillSelect("writeWork",data.works.map(w=>({id:w.id,name:w.name})),"作品を選択");
-  fillSelect("chatWork",data.works.map(w=>({id:w.id,name:w.name})),"作品を選択");
-  updateChapterSelect();
-  updateChatCharacters();
+$('chaptersList').innerHTML=data.chapters.filter(c=>!filter||c.workId===filter).map(chapterCard).join('')||'<div class="empty">章・話はまだありません</div>';
+
+fillSelect('writeWork',data.works.map(w=>({id:w.id,name:w.name})),'作品を選択');
+fillSelect('chatWork',data.works.map(w=>({id:w.id,name:w.name})),'作品を選択');
+
+updateChapters();
+updateChatCharacters();
 }
 
-function updateChapterSelect(){
-  const workId=byId("writeWork").value;
-  const items=data.chapters.filter(c=>c.workId===workId).map(c=>({
-    id:c.id,name:`第${c.chapterNumber}章・第${c.episodeNumber}話 ${c.title}`
-  }));
-  fillSelect("writeChapter",items,"章・エピソードを選択");
+function updateChapters(){
+let w=$('writeWork').value;
+let items=data.chapters.filter(c=>c.workId===w).map(c=>({
+id:c.id,name:`第${c.chapterNumber}章・第${c.episodeNumber}話 ${c.title}`
+}));
+fillSelect('writeChapter',items,'章・話を選択');
 }
 
 function updateChatCharacters(){
-  const workId=byId("chatWork").value;
-  const chars=data.characters.filter(c=>c.workId===workId);
-  fillSelect("chatCharacter",chars.map(c=>({id:c.id,name:c.name})),"キャラクターを選択");
-  renderMessages();
+let old=[...$('chatCharacters').selectedOptions].map(x=>x.value);
+let w=$('chatWork').value;
+$('chatCharacters').innerHTML=data.characters.filter(c=>c.workId===w).map(c=>
+`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+old.forEach(id=>{
+let o=[...$('chatCharacters').options].find(x=>x.value===id);
+if(o)o.selected=true;
+});
+renderMessages();
 }
 
-byId("chapterFilter").addEventListener("change",refresh);
-byId("writeWork").addEventListener("change",()=>{
-  updateChapterSelect();
-  loadWriting();
-});
-byId("writeChapter").addEventListener("change",loadWriting);
-byId("chatWork").addEventListener("change",updateChatCharacters);
-byId("chatCharacter").addEventListener("change",renderMessages);
-
-function openWriting(workId,chapterId=""){
-  showTab("writer");
-  byId("writeWork").value=workId;
-  updateChapterSelect();
-  byId("writeChapter").value=chapterId;
-  loadWriting();
+function openWriting(w,c=''){
+showTab('writer');
+$('writeWork').value=w;
+updateChapters();
+$('writeChapter').value=c;
+loadWriting();
 }
 
 function loadWriting(){
-  const id=byId("writeChapter").value;
-  const chapter=data.chapters.find(c=>c.id===id);
-  currentEditorId=id;
-  byId("editorTitle").value=chapter?.title||"";
-  byId("editor").value=chapter?.body||"";
-  byId("saveStatus").textContent=chapter?"保存済み":"新規執筆";
+let c=data.chapters.find(x=>x.id===$('writeChapter').value);
+$('editorTitle').value=c?.title||'';
+$('editor').value=c?.body||'';
+$('saveStatus').textContent=c?'保存済み':'新規執筆';
 }
 
 function saveWriting(){
-  const id=byId("writeChapter").value;
-  const chapter=data.chapters.find(c=>c.id===id);
-  if(!chapter){
-    alert("先に作品と章・エピソードを作成してください。");
-    return;
-  }
-  chapter.title=byId("editorTitle").value.trim()||"無題";
-  chapter.body=byId("editor").value;
-  chapter.updated=Date.now();
-  saveData();
-  byId("saveStatus").textContent="保存しました";
-  refresh();
+let c=data.chapters.find(x=>x.id===$('writeChapter').value);
+if(!c)return alert('先に章・話を作成してください');
+c.title=$('editorTitle').value.trim()||'無題';
+c.body=$('editor').value;
+c.updated=Date.now();
+save();
+$('saveStatus').textContent='保存しました';
+refresh();
 }
 
-function autoSaveWriting(){
-  clearTimeout(autoSaveTimer);
-  byId("saveStatus").textContent="保存中……";
-  autoSaveTimer=setTimeout(()=>{
-    const id=byId("writeChapter").value;
-    const chapter=data.chapters.find(c=>c.id===id);
-    if(!chapter) return;
-    chapter.title=byId("editorTitle").value.trim()||"無題";
-    chapter.body=byId("editor").value;
-    chapter.updated=Date.now();
-    if(saveData()) byId("saveStatus").textContent="自動保存済み";
-  },800);
+function autoSave(){
+clearTimeout(timer);
+$('saveStatus').textContent='保存中……';
+timer=setTimeout(()=>{
+let c=data.chapters.find(x=>x.id===$('writeChapter').value);
+if(!c)return;
+c.title=$('editorTitle').value.trim()||'無題';
+c.body=$('editor').value;
+if(save())$('saveStatus').textContent='自動保存済み';
+},700);
 }
 
-byId("editor").addEventListener("input",autoSaveWriting);
-byId("editorTitle").addEventListener("input",autoSaveWriting);
+$('editor').oninput=autoSave;
+$('editorTitle').oninput=autoSave;
+$('writeWork').onchange=()=>{updateChapters();loadWriting()};
+$('writeChapter').onchange=loadWriting;
+$('chapterFilter').onchange=refresh;
+$('chatWork').onchange=updateChatCharacters;
+$('chatCharacters').onchange=renderMessages;
 
 function sendChat(){
-  const workId=byId("chatWork").value;
-  const text=byId("chatInput").value.trim();
-  if(!workId){alert("作品を選択してください。");return;}
-  if(!text){alert("メッセージを入力してください。");return;}
-  data.messages.push({
-    id:uid(),workId,
-    characterId:byId("chatCharacter").value,
-    role:byId("chatMode").value,
-    text,time:Date.now()
-  });
-  byId("chatInput").value="";
-  saveData();
-  renderMessages();
+let w=$('chatWork').value;
+let t=$('chatInput').value.trim();
+if(!w||!t)return alert('作品と記録内容を入力してください');
+let selected=[...$('chatCharacters').selectedOptions];
+if(selected.length){
+selected.forEach(c=>data.messages.push({
+id:uid(),workId:w,characterId:c.value,role:'character',text:t,time:Date.now()
+}));
+}else{
+data.messages.push({id:uid(),workId:w,role:'user',text:t,time:Date.now()});
+}
+$('chatInput').value='';
+save();
+renderMessages();
 }
 
 function renderMessages(){
-  const workId=byId("chatWork").value;
-  const characterId=byId("chatCharacter").value;
-  const messages=data.messages.filter(m=>
-    m.workId===workId&&(!characterId||m.characterId===characterId)
-  );
-  byId("chatBox").innerHTML=messages.length?messages.map(m=>{
-    const c=data.characters.find(x=>x.id===m.characterId);
-    const name=m.role==="user"?"あなた":m.role==="note"?"メモ":c?.name||"キャラクター";
-    const cls=m.role==="user"?"user":"character";
-    return `<div class="message ${cls}">
-      <small>${esc(name)} · ${new Date(m.time).toLocaleString("ja-JP")}</small>
-      ${esc(m.text)}
-    </div>`;
-  }).join(""):'<p class="muted">この作品の会話履歴はまだありません。</p>';
-  byId("chatBox").scrollTop=byId("chatBox").scrollHeight;
+let w=$('chatWork').value;
+let ids=[...$('chatCharacters').selectedOptions].map(x=>x.value);
+let list=data.messages.filter(m=>m.workId===w&&(!ids.length||!m.characterId||ids.includes(m.characterId)));
+$('chatBox').innerHTML=list.map(m=>{
+let c=data.characters.find(x=>x.id===m.characterId);
+return `<div class="message ${m.role==='user'?'user':''}">
+<small>${esc(c?.name||'あなた')} · ${new Date(m.time).toLocaleString('ja-JP')}</small>
+${esc(m.text)}
+</div>`;
+}).join('')||'<p class="muted">会話履歴はありません</p>';
+$('chatBox').scrollTop=$('chatBox').scrollHeight;
 }
 
-function exportChat(){
-  const workId=byId("chatWork").value;
-  if(!workId){alert("作品を選択してください。");return;}
-  const messages=data.messages.filter(m=>m.workId===workId);
-  const lines=messages.map(m=>{
-    const c=data.characters.find(x=>x.id===m.characterId);
-    const name=m.role==="user"?"あなた":m.role==="note"?"メモ":c?.name||"キャラクター";
-    return `[${new Date(m.time).toLocaleString("ja-JP")}] ${name}\n${m.text}`;
-  });
-  downloadFile("conversation.txt",lines.join("\n\n"),"text/plain;charset=utf-8");
-}
-
-function downloadFile(name,content,type){
-  const blob=new Blob([content],{type});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download=name;
-  document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+function download(name,content,type){
+let a=document.createElement('a');
+let url=URL.createObjectURL(new Blob([content],{type}));
+a.href=url;
+a.download=name;
+a.click();
+URL.revokeObjectURL(url);
 }
 
 function backup(){
-  const json=JSON.stringify({
-    version:2,exportedAt:new Date().toISOString(),data
-  },null,2);
-  downloadFile("gothic-library-backup.json",json,"application/json");
+download('gothic-library-backup.json',JSON.stringify({
+version:4,exportedAt:new Date().toISOString(),data
+},null,2),'application/json');
 }
 
-byId("restoreFile").addEventListener("change",async e=>{
-  const file=e.target.files?.[0];
-  if(!file)return;
-  try{
-    const parsed=JSON.parse(await file.text());
-    const incoming=parsed.data||parsed;
-    if(!incoming||!Array.isArray(incoming.works)||
-       !Array.isArray(incoming.characters)||!Array.isArray(incoming.chapters)){
-      throw new Error("形式が違います");
-    }
-    if(!confirm("現在のデータをバックアップの内容に置き換えますか？"))return;
-    data={
-      works:incoming.works,
-      characters:incoming.characters,
-      chapters:incoming.chapters,
-      messages:Array.isArray(incoming.messages)?incoming.messages:[]
-    };
-    if(saveData()){refresh();alert("復元しました。");}
-  }catch(error){
-    alert("バックアップを読み込めませんでした。正しいJSONファイルを選んでください。");
-  }finally{
-    e.target.value="";
-  }
-});
+function exportChat(){
+let w=$('chatWork').value;
+if(!w)return alert('作品を選択してください');
+let text=data.messages.filter(m=>m.workId===w).map(m=>
+`${new Date(m.time).toLocaleString('ja-JP')}\n${m.text}`
+).join('\n\n');
+download('conversation.txt',text,'text/plain;charset=utf-8');
+}
+
+$('restoreFile').onchange=async e=>{
+let file=e.target.files[0];
+if(!file)return;
+try{
+let parsed=JSON.parse(await file.text());
+let d=parsed.data||parsed;
+if(!Array.isArray(d.works)||!Array.isArray(d.characters)||!Array.isArray(d.chapters))throw Error();
+if(!confirm('現在のデータを置き換えますか？'))return;
+data={
+works:d.works,
+characters:d.characters,
+chapters:d.chapters,
+messages:d.messages||[]
+};
+save();
+refresh();
+alert('復元しました');
+}catch(e){
+alert('バックアップを読み込めませんでした');
+}
+e.target.value='';
+};
 
 function clearAll(){
-  if(!confirm("すべての作品・人物・章・会話履歴を削除しますか？"))return;
-  if(!confirm("本当に削除しますか？先にバックアップをおすすめします。"))return;
-  data=emptyData();
-  saveData();
-  refresh();
-  alert("データを削除しました。");
+if(!confirm('すべてのデータを削除しますか？'))return;
+if(!confirm('本当に削除しますか？'))return;
+data=empty();
+save();
+refresh();
 }
 
 refresh();
