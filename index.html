@@ -605,3 +605,96 @@ refresh();
 </script>
 </body>
 </html>
+<button class="primary" onclick="sendChat()">ログに追加</button>
+<button onclick="copyRoleplayPrompt()">ChatGPT用プロンプトをコピー</button>
+function copyRoleplayPrompt(){
+
+const workId=$('chatWork').value;
+
+if(!workId){
+alert('作品を選択してください');
+return;
+}
+
+const characters=[...$('chatCharacters').selectedOptions]
+.map(o=>data.characters.find(c=>c.id===o.value))
+.filter(Boolean);
+
+if(!characters.length){
+alert('キャラクターを選択してください');
+return;
+}
+
+const work=data.works.find(w=>w.id===workId);
+
+const history=data.messages
+.filter(m=>m.workId===workId)
+.slice(-30)
+.map(m=>{
+const c=data.characters.find(x=>x.id===m.characterId);
+return `${c?.name||'ユーザー'}：${m.text}`;
+}).join('\n');
+
+const prompt=`
+あなたはプロの夢小説家兼ロールプレイAIです。
+
+【作品】
+${work.name}
+
+【世界観】
+${work.world||''}
+
+【作品メモ】
+${work.memo||''}
+
+【登場人物】
+${characters.map(c=>`
+名前：${c.name}
+年齢：${c.age}
+容姿：${c.appearance}
+性格：${c.personality}
+口調：${c.speech}
+過去：${c.background}
+人間関係：${c.relations}
+その他：${c.memo}
+`).join('\n')}
+
+【過去の会話】
+${history}
+
+【指示】
+・キャラクターの性格と口調を厳守する
+・キャラクターの人格を崩さない
+・会話の流れと過去の出来事を引き継ぐ
+・自然で臨場感のある会話をする
+・ユーザーの行動や台詞を勝手に決めない
+・小説的な情景描写も取り入れる
+・キャラクターとして自然に返答する
+
+これまでの会話の続きを始めてください。
+`;
+
+try{
+if(navigator.clipboard?.writeText){
+navigator.clipboard.writeText(prompt).then(()=>{
+alert('プロンプトをコピーしました！ChatGPTに貼り付けてください。');
+}).catch(()=>{
+fallbackCopy(prompt);
+});
+}else{
+fallbackCopy(prompt);
+}
+}catch(e){
+fallbackCopy(prompt);
+}
+}
+
+function fallbackCopy(text){
+const t=document.createElement('textarea');
+t.value=text;
+document.body.appendChild(t);
+t.select();
+document.execCommand('copy');
+t.remove();
+alert('プロンプトをコピーしました！');
+}
