@@ -583,6 +583,73 @@ function refresh(){
   updateWriteChapters();updateChatCharacters();updateSessions();
 }
 load();refresh();
+function exportHandover(){
+  const lines=[];
+
+  lines.push('【GOTHIC LIBRARY 完全引き継ぎデータ】');
+  lines.push('作成日：'+new Date().toLocaleString('ja-JP'));
+
+  data.works.forEach(w=>{
+    lines.push('\n\n========== 作品 ==========');
+    lines.push('作品名：'+w.name);
+    lines.push('ジャンル：'+(w.genre||''));
+    lines.push('世界観：'+(w.world||''));
+    lines.push('作品メモ：'+(w.memo||''));
+
+    lines.push('\n【キャラクター】');
+    data.characters.filter(c=>c.workId===w.id).forEach(c=>{
+      lines.push(`
+名前：${c.name}
+年齢：${c.age}
+容姿：${c.appearance}
+性格：${c.personality}
+口調：${c.speech}
+過去・背景：${c.background}
+人間関係：${c.relations}
+その他：${c.memo}`);
+    });
+
+    lines.push('\n【小説・エピソード本文】');
+    data.chapters.filter(c=>c.workId===w.id).forEach(c=>{
+      lines.push('\n■ '+c.title+'\n'+(c.body||''));
+    });
+
+    lines.push('\n【人物相関】');
+    data.relationships.filter(r=>r.workId===w.id).forEach(r=>{
+      const a=data.characters.find(c=>c.id===r.personA);
+      const b=data.characters.find(c=>c.id===r.personB);
+      lines.push(`${a?.name||'不明'} ⇄ ${b?.name||'不明'}：${r.type}\n${r.detail||''}`);
+    });
+
+    lines.push('\n【物語の記憶帳】');
+    data.memories.filter(m=>m.workId===w.id).forEach(m=>{
+      lines.push(`【${m.type}】${m.text}`);
+    });
+
+    lines.push('\n【会話セッション・全履歴】');
+    data.sessions.filter(s=>s.workId===w.id).forEach(s=>{
+      lines.push('\n■ セッション：'+s.name);
+      data.messages.filter(m=>m.sessionId===s.id).forEach(m=>{
+        const c=data.characters.find(x=>x.id===m.characterId);
+        lines.push(`${c?.name||'ユーザー'}：${m.text}`);
+      });
+    });
+  });
+
+  const blob=new Blob([lines.join('\n')],{
+    type:'text/plain;charset=utf-8'
+  });
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='GOTHIC_LIBRARY_完全引き継ぎ.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('完全引き継ぎパックを作成しました！');
+}
 </script>
 </body>
 </html>
+<button class="primary" onclick="exportHandover()">
+  📦 完全引き継ぎパックを作成
+</button>
