@@ -1026,3 +1026,104 @@ updateChatCharacters = function(){
 
 setupSessionUI();
 updateSessionUI();
+// ===== STORY MEMORY =====
+
+data.memories = data.memories || [];
+
+function setupMemory(){
+
+if($('memoryPanel')) return;
+
+const panel=document.createElement('div');
+panel.id='memoryPanel';
+panel.className='card';
+panel.style.margin='15px 0';
+
+panel.innerHTML=`
+<h3>📖 物語の記憶帳</h3>
+
+<div class="field">
+<label>記憶の種類</label>
+<select id="memoryType">
+<option>重要な出来事</option>
+<option>恋愛・関係性</option>
+<option>約束・誓い</option>
+<option>秘密</option>
+<option>キャラクターの変化</option>
+<option>現在の状況</option>
+<option>その他</option>
+</select>
+</div>
+
+<div class="field">
+<label>記憶の内容</label>
+<textarea id="memoryText" placeholder="忘れたくない出来事や設定を記録"></textarea>
+</div>
+
+<button class="primary" onclick="addMemory()">記憶を保存</button>
+
+<div id="memoryList" style="margin-top:15px"></div>
+`;
+
+$('chatBox').parentNode.insertBefore(panel,$('chatBox'));
+}
+
+function addMemory(){
+
+const workId=$('chatWork').value;
+const type=$('memoryType').value;
+const text=$('memoryText').value.trim();
+
+if(!workId)return alert('作品を選択してください');
+if(!text)return alert('記憶内容を入力してください');
+
+data.memories.push({
+id:uid(),
+workId,
+type,
+text,
+created:Date.now()
+});
+
+$('memoryText').value='';
+
+save();
+renderMemory();
+
+alert('記憶を保存しました！');
+}
+
+function deleteMemory(id){
+
+if(!confirm('この記憶を削除しますか？'))return;
+
+data.memories=data.memories.filter(m=>m.id!==id);
+
+save();
+renderMemory();
+}
+
+function renderMemory(){
+
+if(!$('memoryList'))return;
+
+const workId=$('chatWork').value;
+
+const memories=data.memories.filter(m=>m.workId===workId);
+
+$('memoryList').innerHTML=memories.map(m=>`
+<div class="card" style="margin-top:10px">
+<div style="color:var(--gold)">${esc(m.type)}</div>
+<p>${esc(m.text)}</p>
+<small class="muted">${new Date(m.created).toLocaleDateString('ja-JP')}</small>
+<div class="actions">
+<button class="danger small" onclick="deleteMemory('${m.id}')">削除</button>
+</div>
+</div>
+`).join('')||'<p class="muted">記憶はまだありません。</p>';
+}
+
+setupMemory();
+renderMemory();
+
+$('chatWork').addEventListener('change',renderMemory);
