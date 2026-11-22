@@ -202,8 +202,25 @@ async function refresh(){
 }
 function fillSelect(sel,works,keepAll=false){const el=$(sel),old=el.value;el.innerHTML=(keepAll?'<option value="">すべての作品</option>':'')+works.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old}
 function workCard(w,editable=false){return `<article class="card"><div class="story-title">${esc(w.name)}</div><div class="badge">${esc(w.genre||'ジャンル未設定')}</div><p>${esc(w.world||'世界観未設定')}</p>${editable?`<div class="actions"><button class="btn small primary" onclick="openWork('${w.id}')">執筆する</button><button class="btn small" onclick="editWork('${w.id}')">編集</button><button class="btn small danger" onclick="removeItem('works','${w.id}')">削除</button></div>`:''}</article>`}
-function openForm(id){$(id).classList.remove('hidden');$(id).scrollIntoView({behavior:'smooth',block:'start'})}
-function closeForm(id){$(id).classList.add('hidden')}
+
+function openForm(id){
+  const el = document.getElementById(id);
+  if (!el) {
+    console.error('フォームが見つかりません:', id);
+    return;
+  }
+  el.classList.remove('hidden');
+}
+
+function closeForm(id){
+  const el = document.getElementById(id);
+  if (!el) {
+    console.error('フォームが見つかりません:', id);
+    return;
+  }
+  el.classList.add('hidden');
+}
+
 $('#newWork').onclick=()=>{ $('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
 $('#newWorkTop').onclick=()=>{showTab('works');$('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
 $('#workForm').onsubmit=async e=>{e.preventDefault();const wid=$('#workId').value;await put('works',{id:wid||id(),name:$('#workName').value.trim(),genre:$('#workGenre').value,world:$('#workWorld').value,memo:$('#workMemo').value,updated:Date.now()});closeForm('workFormWrap');e.target.reset();refresh()};
