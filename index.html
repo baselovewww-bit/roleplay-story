@@ -145,7 +145,7 @@
         <h3>保存について</h3><p>データはこのiPhoneのSafari内に保存されます。Safariの履歴・Webサイトデータを消去すると、保存内容も消える場合があります。定期的にバックアップしてください。</p>
       </div>
       <div class="card" style="margin-top:12px">
-        <h3>アプリ情報</h3><p>Roleplay Story / The Gothic Library<br>オフライン対応のローカル管理用プロトタイプ</p>
+        <h3>アプリ情報</h3><p>Roleplay Story / The Gothic Library<br>オフライン対応のローカル管理用プロトタイプ<br><span id="storageMode">保存方式を確認中…</span></p>
       </div>
     </section>
   </main>
@@ -154,11 +154,32 @@
 <script>
 const DB_NAME='RoleplayStoryDB', DB_VERSION=1;
 let db;
+let useLocalStorage=false;
 const stores=['works','characters','chapters','messages'];
-function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const d=req.result;for(const s of stores){if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});}};req.onsuccess=()=>{db=req.result;resolve(db)};req.onerror=()=>reject(req.error)})}
-function all(store){return new Promise((res,rej)=>{const r=db.transaction(store).objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function put(store,obj){return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).put(obj);r.onsuccess=()=>res(obj);r.onerror=()=>rej(r.error)})}
-function del(store,id){return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+const localKey=store=>'roleplay_story_v1_'+store;
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)){useLocalStorage=true;resolve(null);return;}
+    let req;
+    try{req=indexedDB.open(DB_NAME,DB_VERSION);}catch(e){useLocalStorage=true;resolve(null);return;}
+    req.onupgradeneeded=()=>{const d=req.result;for(const s of stores){if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});}};
+    req.onsuccess=()=>{db=req.result;resolve(db)};
+    req.onerror=()=>{useLocalStorage=true;resolve(null)};
+    req.onblocked=()=>{useLocalStorage=true;resolve(null)};
+  });
+}
+function all(store){
+  if(useLocalStorage){try{return Promise.resolve(JSON.parse(localStorage.getItem(localKey(store))||'[]'));}catch(e){return Promise.reject(e)}}
+  return new Promise((res,rej)=>{const r=db.transaction(store).objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+}
+function put(store,obj){
+  if(useLocalStorage){try{const a=JSON.parse(localStorage.getItem(localKey(store))||'[]');const i=a.findIndex(x=>x.id===obj.id);if(i>=0)a[i]=obj;else a.push(obj);localStorage.setItem(localKey(store),JSON.stringify(a));return Promise.resolve(obj);}catch(e){return Promise.reject(e)}}
+  return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).put(obj);r.onsuccess=()=>res(obj);r.onerror=()=>rej(r.error)});
+}
+function del(store,itemId){
+  if(useLocalStorage){try{const a=JSON.parse(localStorage.getItem(localKey(store))||'[]').filter(x=>x.id!==itemId);localStorage.setItem(localKey(store),JSON.stringify(a));return Promise.resolve();}catch(e){return Promise.reject(e)}}
+  return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).delete(itemId);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+}
 const id=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=s=>document.querySelector(s);
@@ -183,7 +204,8 @@ function fillSelect(sel,works,keepAll=false){const el=$(sel),old=el.value;el.inn
 function workCard(w,editable=false){return `<article class="card"><div class="story-title">${esc(w.name)}</div><div class="badge">${esc(w.genre||'ジャンル未設定')}</div><p>${esc(w.world||'世界観未設定')}</p>${editable?`<div class="actions"><button class="btn small primary" onclick="openWork('${w.id}')">執筆する</button><button class="btn small" onclick="editWork('${w.id}')">編集</button><button class="btn small danger" onclick="removeItem('works','${w.id}')">削除</button></div>`:''}</article>`}
 function openForm(id){$(id).classList.remove('hidden');$(id).scrollIntoView({behavior:'smooth',block:'start'})}
 function closeForm(id){$(id).classList.add('hidden')}
-$('#newWork').onclick=$('#newWorkTop').onclick=()=>{ $('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
+$('#newWork').onclick=()=>{ $('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
+$('#newWorkTop').onclick=()=>{showTab('works');$('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
 $('#workForm').onsubmit=async e=>{e.preventDefault();const wid=$('#workId').value;await put('works',{id:wid||id(),name:$('#workName').value.trim(),genre:$('#workGenre').value,world:$('#workWorld').value,memo:$('#workMemo').value,updated:Date.now()});closeForm('workFormWrap');e.target.reset();refresh()};
 window.editWork=async wid=>{const w=(await all('works')).find(x=>x.id===wid);if(!w)return;$('#workId').value=w.id;$('#workName').value=w.name;$('#workGenre').value=w.genre;$('#workWorld').value=w.world;$('#workMemo').value=w.memo;$('#workFormTitle').textContent='作品を編集';openForm('workFormWrap')};
 window.openWork=wid=>{$('#chatWork').value=wid;showTab('chat')};
@@ -205,7 +227,9 @@ function download(name,content,type='text/plain'){const a=document.createElement
 $('#backup').onclick=async()=>{const data={version:1,exportedAt:new Date().toISOString()};for(const s of stores)data[s]=await all(s);download('roleplay-story-backup.json',JSON.stringify(data,null,2),'application/json')};
 $('#restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!confirm('バックアップ内のデータを追加しますか？同じIDのデータは上書きされます。'))return;for(const s of stores)for(const x of (data[s]||[]))await put(s,x);alert('読み込みました。');refresh()}catch(err){alert('ファイルを読み込めませんでした。')}e.target.value=''};
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-(async()=>{await openDB();await refresh()})();
+window.addEventListener('error',e=>{alert('アプリ内でエラーが発生しました：'+(e.message||'不明なエラー'));});
+window.addEventListener('unhandledrejection',e=>{alert('保存または読み込みに失敗しました。Safariの通常タブで開き直して、もう一度お試しください。');});
+(async()=>{try{await openDB();const mode=$('#storageMode');if(mode)mode.textContent=useLocalStorage?'保存方式：Safari内の簡易保存':'保存方式：IndexedDB';await refresh();}catch(e){console.error(e);alert('データ保存領域を初期化できませんでした。Safariの通常タブで開き直してください。');}})();
 </script>
 </body>
 </html>
