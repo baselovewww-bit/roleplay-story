@@ -1,252 +1,709 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#100b19">
-  <meta name="description" content="物語、キャラクター、章と会話を自分だけの書庫に保存するロールプレイノート。">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <title>Roleplay Story | The Gothic Library</title>
-  <style>
-    :root{--bg:#0b0811;--panel:#15101e;--panel2:#1c1528;--line:#382747;--purple:#a77ad5;--purple2:#70429a;--text:#f3edf8;--muted:#b6a8c2;--gold:#c9a96e;--danger:#d67d91}
-    *{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 50% -20%,#30203f 0%,var(--bg) 58%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;min-height:100vh}
-    button,input,textarea,select{font:inherit} button{cursor:pointer}
-    .app{max-width:900px;margin:auto;padding:env(safe-area-inset-top) 16px calc(90px + env(safe-area-inset-bottom))}
-    header{padding:26px 4px 18px;text-align:center;border-bottom:1px solid var(--line)}
-    .sigil{color:var(--gold);letter-spacing:.35em;font-size:11px}.brand{font-family:Georgia,serif;font-size:clamp(25px,7vw,38px);letter-spacing:.08em;margin:9px 0 4px}.subtitle{font-size:11px;letter-spacing:.2em;color:var(--muted)}
-    nav{display:flex;gap:7px;overflow:auto;padding:14px 0;position:sticky;top:0;background:#0b0811eF;backdrop-filter:blur(12px);z-index:5}
-    nav button,.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:10px 14px;white-space:nowrap}
-    nav button.active,.btn.primary{background:linear-gradient(135deg,#5b3479,#352044);border-color:var(--purple);color:white}
-    .section{display:none}.section.active{display:block}
-    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 12px}.section-head h2{font-family:Georgia,serif;font-weight:500;letter-spacing:.08em;margin:0;font-size:22px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-    .card{background:linear-gradient(145deg,#1b1425,#100d17);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 12px 28px #0003}
-    .card h3{margin:0 0 8px;font-size:16px}.card p{margin:5px 0;color:var(--muted);font-size:13px;line-height:1.5}
-    .empty{border:1px dashed #594267;border-radius:16px;padding:25px;text-align:center;color:var(--muted);line-height:1.7}
-    .form{display:grid;gap:11px}.field{display:grid;gap:6px}.field label{font-size:12px;color:var(--muted)}
-    input,textarea,select{width:100%;background:#0e0a15;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;outline:none}
-    input:focus,textarea:focus,select:focus{border-color:var(--purple)} textarea{min-height:90px;resize:vertical}
-    .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
-    .actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.small{font-size:12px;padding:8px 11px}.danger{color:#ffc5d0;border-color:#75404f}
-    .badge{display:inline-block;font-size:10px;color:#e1c9f6;border:1px solid #594267;border-radius:999px;padding:4px 8px;margin:0 4px 5px 0}
-    .story-title{font-family:Georgia,serif;font-size:19px}.list{display:grid;gap:9px}
-    .item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#100c17;border:1px solid var(--line);border-radius:12px;padding:11px}
-    .item strong{font-size:14px}.item small{display:block;color:var(--muted);margin-top:3px}
-    .chatbox{display:flex;flex-direction:column;gap:10px;min-height:260px;max-height:55vh;overflow:auto;padding:12px;background:#0c0912;border:1px solid var(--line);border-radius:14px}
-    .bubble{max-width:88%;padding:11px 13px;border-radius:13px;line-height:1.6;font-size:14px;white-space:pre-wrap}.bubble.user{align-self:flex-end;background:#3a2850}.bubble.note{align-self:flex-start;background:#1a1422;border:1px solid #392747}.bubble.system{align-self:center;color:var(--muted);font-size:11px}
-    .chat-compose{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:9px}.chat-compose textarea{min-height:54px}
-    .notice{border-left:3px solid var(--gold);padding:10px 12px;background:#211a20;color:#d8c9d9;font-size:12px;line-height:1.6;border-radius:0 9px 9px 0;margin:12px 0}
-    footer{text-align:center;color:#796b84;font-size:10px;padding:25px 0}
-    .hidden{display:none!important}
-    @media(min-width:650px){.app{padding-left:24px;padding-right:24px}.chatbox{max-height:520px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100b18">
+<title>Gothic Library</title>
+<style>
+:root {
+  --bg:#100b18;
+  --panel:#1b1425;
+  --panel2:#241a31;
+  --purple:#79509a;
+  --gold:#c5a76a;
+  --text:#eee7f2;
+  --muted:#a99caf;
+  --border:#493552;
+  --danger:#b85b70;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif;
+  line-height:1.65;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:900px;margin:auto;padding:18px 15px 60px}
+header{text-align:center;padding:28px 5px 24px;border-bottom:1px solid var(--border)}
+.sigil{color:var(--gold);letter-spacing:5px;font-size:11px}
+header h1{font-family:Georgia,serif;font-size:clamp(27px,7vw,42px);letter-spacing:3px;margin:10px 0}
+header p{color:var(--muted);font-size:12px;letter-spacing:2px}
+nav{display:flex;gap:7px;overflow-x:auto;padding:18px 0}
+nav button{
+  flex:0 0 auto;border:1px solid var(--border);border-radius:30px;
+  background:transparent;color:var(--muted);padding:11px 17px;min-height:46px;
+}
+nav button.active{background:var(--purple);color:white;border-color:var(--purple)}
+.section{display:none}
+.section.active{display:block}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0}
+h2{font-family:Georgia,serif;font-size:25px;font-weight:normal;margin:0}
+h3{font-size:17px;margin:0 0 8px}
+.muted{color:var(--muted);font-size:13px}
+.gold{color:var(--gold)}
+.btn{
+  border:1px solid var(--border);border-radius:25px;
+  background:var(--panel2);color:var(--text);
+  padding:10px 15px;min-height:44px;
+}
+.btn.primary{background:#53366b;border-color:#9870b2}
+.btn.danger{color:#ffb7c3;border-color:#75404e}
+.btn.small{padding:6px 11px;min-height:38px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
+.card{
+  background:linear-gradient(145deg,#21182c,#17111f);
+  border:1px solid var(--border);border-radius:17px;padding:17px;
+  min-width:0;overflow-wrap:anywhere;
+}
+.card p{margin:7px 0;color:var(--muted);font-size:14px}
+.card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.empty{
+  border:1px dashed var(--border);border-radius:16px;
+  padding:30px 15px;text-align:center;color:var(--muted)
+}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
+.stat strong{display:block;font:28px Georgia;color:var(--gold)}
+.stat span{font-size:12px;color:var(--muted)}
+.field{display:grid;gap:5px;margin:12px 0}
+label{font-size:13px;color:var(--gold)}
+input,textarea,select{
+  width:100%;background:#100c17;color:var(--text);
+  border:1px solid var(--border);border-radius:10px;padding:11px;
+  min-height:44px;
+}
+textarea{min-height:110px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--purple)}
+.modal{
+  display:none;position:fixed;inset:0;background:#000b;
+  z-index:10;overflow-y:auto;padding:20px 12px;
+}
+.modal.open{display:block}
+.modal-box{
+  max-width:600px;margin:30px auto;background:var(--panel);
+  border:1px solid var(--border);border-radius:18px;padding:20px;
+}
+.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#editor{min-height:48vh;font-size:16px;line-height:1.9}
+.chat-box{
+  background:#0d0913;border:1px solid var(--border);
+  border-radius:14px;padding:12px;min-height:180px;max-height:45vh;
+  overflow-y:auto;margin:12px 0;
+}
+.message{padding:10px 12px;border-radius:12px;margin:8px 0;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.user{margin-left:auto;background:#49345e}
+.message.character{background:#292033}
+.message small{display:block;color:#c6b5ce;font-size:11px;margin-bottom:4px}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:40px;letter-spacing:2px}
+@media(max-width:480px){
+ .app{padding:12px 12px 45px}
+ .section-head{align-items:flex-start;flex-wrap:wrap}
+ .stats{gap:6px}
+ .stat{padding:10px}
+ .stat strong{font-size:24px}
+}
+</style>
 </head>
 <body>
 <div class="app">
-  <header>
-    <div class="sigil">✦ THE GOTHIC LIBRARY ✦</div>
-    <div class="brand">ROLEPLAY STORY</div>
-    <div class="subtitle">YOUR CHARACTERS · YOUR WORLD · YOUR STORY</div>
-  </header>
-  <nav aria-label="メインメニュー">
-    <button class="active" data-tab="home">書庫</button>
-    <button data-tab="works">作品</button>
-    <button data-tab="characters">人物</button>
-    <button data-tab="chapters">章・話</button>
-    <button data-tab="chat">執筆室</button>
-    <button data-tab="settings">設定</button>
-  </nav>
+<header>
+  <div class="sigil">✦ THE GOTHIC LIBRARY ✦</div>
+  <h1>ROLEPLAY STORY</h1>
+  <p>YOUR CHARACTERS · YOUR WORLD · YOUR STORY</p>
+</header>
 
-  <main>
-    <section id="home" class="section active">
-      <div class="section-head"><h2>Welcome to the Library</h2><button class="btn primary" id="newWorkTop">＋ 新しい作品</button></div>
-      <p class="muted">あなたの物語と登場人物を、ここに保管しましょう。</p>
-      <div class="grid" id="homeStats"></div>
-      <div class="section-head"><h2>Recently Opened</h2></div>
-      <div id="recentWorks" class="grid"></div>
-      <div class="notice">この試作品は作品・人物・章・エピソード・会話をiPhone内のブラウザに保存します。AIによる自動返信はまだ接続していません。</div>
-    </section>
+<nav aria-label="メインメニュー">
+  <button class="active" data-tab="home">書庫</button>
+  <button data-tab="works">作品</button>
+  <button data-tab="characters">人物</button>
+  <button data-tab="chapters">章・話</button>
+  <button data-tab="writer">執筆室</button>
+  <button data-tab="chat">会話履歴</button>
+  <button data-tab="settings">設定</button>
+</nav>
 
-    <section id="works" class="section">
-      <div class="section-head"><h2>My Stories</h2><button class="btn primary" id="newWork">＋ 作品を作成</button></div>
-      <div id="worksList" class="grid"></div>
-      <div id="workFormWrap" class="card hidden">
-        <h3 id="workFormTitle">新しい作品</h3>
-        <form id="workForm" class="form">
-          <input type="hidden" id="workId">
-          <div class="field"><label for="workName">作品タイトル</label><input id="workName" required placeholder="例：月影のモリアーティ"></div>
-          <div class="field"><label for="workGenre">ジャンル</label><input id="workGenre" placeholder="恋愛、ファンタジー、現代、自由設定など"></div>
-          <div class="field"><label for="workWorld">世界観・舞台</label><textarea id="workWorld" placeholder="時代、場所、世界のルールなど"></textarea></div>
-          <div class="field"><label for="workMemo">作品メモ</label><textarea id="workMemo" placeholder="物語の軸、雰囲気、注意点など"></textarea></div>
-          <div class="actions"><button class="btn primary" type="submit">保存する</button><button class="btn" type="button" data-cancel="workFormWrap">キャンセル</button></div>
-        </form>
-      </div>
-    </section>
+<section id="home" class="section active">
+  <div class="section-head">
+    <div><h2>Welcome to the Library</h2><p class="muted">物語とキャラクターを管理しましょう。</p></div>
+    <button class="btn primary" onclick="newWork()">＋ 新しい作品</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><span>作品</span><strong id="statWorks">0</strong></div>
+    <div class="stat"><span>キャラクター</span><strong id="statChars">0</strong></div>
+    <div class="stat"><span>章・エピソード</span><strong id="statChapters">0</strong></div>
+  </div>
+  <h2>Recently Opened</h2>
+  <div id="recentWorks" class="grid" style="margin-top:13px"></div>
+</section>
 
-    <section id="characters" class="section">
-      <div class="section-head"><h2>Characters</h2><button class="btn primary" id="newCharacter">＋ 人物を作成</button></div>
-      <div id="charactersList" class="grid"></div>
-      <div id="characterFormWrap" class="card hidden">
-        <h3 id="characterFormTitle">キャラクター作成</h3>
-        <form id="characterForm" class="form">
-          <input type="hidden" id="characterId">
-          <div class="field"><label for="characterWork">所属作品</label><select id="characterWork" required></select></div>
-          <div class="row">
-            <div class="field"><label for="characterName">名前</label><input id="characterName" required></div>
-            <div class="field"><label for="characterAge">年齢</label><input id="characterAge" placeholder="例：28歳"></div>
-          </div>
-          <div class="field"><label for="characterAppearance">容姿</label><textarea id="characterAppearance"></textarea></div>
-          <div class="field"><label for="characterPersonality">性格</label><textarea id="characterPersonality"></textarea></div>
-          <div class="field"><label for="characterSpeech">口調・話し方</label><textarea id="characterSpeech"></textarea></div>
-          <div class="field"><label for="characterPast">過去・秘密</label><textarea id="characterPast"></textarea></div>
-          <div class="field"><label for="characterRelations">人間関係</label><textarea id="characterRelations"></textarea></div>
-          <div class="field"><label for="characterImage">キャラクター画像</label><input id="characterImage" type="file" accept="image/*"><small class="muted">画像はこの端末内に保存します。大きな画像は保存容量を使います。</small></div>
-          <div class="actions"><button class="btn primary" type="submit">保存する</button><button class="btn" type="button" data-cancel="characterFormWrap">キャンセル</button></div>
-        </form>
-      </div>
-    </section>
+<section id="works" class="section">
+  <div class="section-head">
+    <h2>My Stories</h2>
+    <button class="btn primary" onclick="newWork()">＋ 作品を作成</button>
+  </div>
+  <div id="worksList" class="grid"></div>
+</section>
 
-    <section id="chapters" class="section">
-      <div class="section-head"><h2>Chapters & Episodes</h2><button class="btn primary" id="newChapter">＋ 章・エピソード</button></div>
-      <div class="field" style="margin-bottom:12px"><label for="chapterWorkFilter">作品で絞り込む</label><select id="chapterWorkFilter"><option value="">すべての作品</option></select></div>
-      <div id="chaptersList" class="list"></div>
-      <div id="chapterFormWrap" class="card hidden">
-        <h3 id="chapterFormTitle">章・エピソード作成</h3>
-        <form id="chapterForm" class="form">
-          <input type="hidden" id="chapterId">
-          <div class="field"><label for="chapterWork">作品</label><select id="chapterWork" required></select></div>
-          <div class="row"><div class="field"><label for="chapterNumber">章番号</label><input id="chapterNumber" placeholder="1"></div><div class="field"><label for="episodeNumber">話数</label><input id="episodeNumber" placeholder="1"></div></div>
-          <div class="field"><label for="chapterTitle">タイトル</label><input id="chapterTitle" required></div>
-          <div class="field"><label for="chapterBody">本文・あらすじ</label><textarea id="chapterBody" style="min-height:180px"></textarea></div>
-          <div class="actions"><button class="btn primary" type="submit">保存する</button><button class="btn" type="button" data-cancel="chapterFormWrap">キャンセル</button></div>
-        </form>
-      </div>
-    </section>
+<section id="characters" class="section">
+  <div class="section-head">
+    <h2>Characters</h2>
+    <button class="btn primary" onclick="newCharacter()">＋ 人物を作成</button>
+  </div>
+  <div id="charactersList" class="grid"></div>
+</section>
 
-    <section id="chat" class="section">
-      <div class="section-head"><h2>Writing Room</h2><span class="badge">LOCAL LOG</span></div>
-      <div class="field"><label for="chatWork">作品</label><select id="chatWork"></select></div>
-      <div class="field" style="margin-top:9px"><label for="chatCharacter">話し相手（任意）</label><select id="chatCharacter"><option value="">自由執筆</option></select></div>
-      <div class="field" style="margin:9px 0"><label for="chatMode">執筆形式</label><select id="chatMode"><option value="chat">会話形式</option><option value="novel">小説形式</option></select></div>
-      <div class="chatbox" id="chatBox"><div class="bubble system">作品を選び、メッセージを入力すると、この端末に履歴が保存されます。</div></div>
-      <div class="chat-compose"><textarea id="chatInput" placeholder="物語の続きを書く…"></textarea><button class="btn primary" id="sendChat">保存</button></div>
-      <div class="actions"><button class="btn small" id="exportChat">この会話を書き出す</button><button class="btn small danger" id="clearChat">この作品の会話を削除</button></div>
-      <div class="notice">現在はローカル執筆・履歴保存モードです。AIキャラクターの自動応答は未接続です。AI接続には対応モデルと実行環境の追加が必要です。</div>
-    </section>
+<section id="chapters" class="section">
+  <div class="section-head">
+    <h2>Chapters & Episodes</h2>
+    <button class="btn primary" onclick="newChapter()">＋ 章・話を作成</button>
+  </div>
+  <div class="field">
+    <label for="chapterFilter">作品で絞り込み</label>
+    <select id="chapterFilter"><option value="">すべての作品</option></select>
+  </div>
+  <div id="chaptersList" class="grid"></div>
+</section>
 
-    <section id="settings" class="section">
-      <div class="section-head"><h2>Library Settings</h2></div>
-      <div class="card">
-        <h3>データのバックアップ</h3><p>作品・人物・章・会話をJSONファイルに書き出せます。機種変更やブラウザデータ削除の前に保存してください。</p>
-        <div class="actions"><button class="btn primary" id="backup">バックアップを書き出す</button><label class="btn" for="restoreFile">バックアップを読み込む</label><input class="hidden" type="file" id="restoreFile" accept="application/json"></div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <h3>保存について</h3><p>データはこのiPhoneのSafari内に保存されます。Safariの履歴・Webサイトデータを消去すると、保存内容も消える場合があります。定期的にバックアップしてください。</p>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <h3>アプリ情報</h3><p>Roleplay Story / The Gothic Library<br>オフライン対応のローカル管理用プロトタイプ<br><span id="storageMode">保存方式を確認中…</span></p>
-      </div>
-    </section>
-  </main>
-  <footer>✦ A PRIVATE LIBRARY FOR YOUR IMAGINATION ✦</footer>
+<section id="writer" class="section">
+  <div class="section-head"><h2>Writing Room</h2></div>
+  <div class="field">
+    <label for="writeWork">作品</label>
+    <select id="writeWork"></select>
+  </div>
+  <div class="field">
+    <label for="writeChapter">章・エピソード</label>
+    <select id="writeChapter"></select>
+  </div>
+  <div class="field">
+    <label for="editorTitle">タイトル</label>
+    <input id="editorTitle" placeholder="物語のタイトル">
+  </div>
+  <div class="field">
+    <label for="editor">本文</label>
+    <textarea id="editor" placeholder="ここから物語を書き始めましょう……"></textarea>
+  </div>
+  <div class="toolbar">
+    <button class="btn primary" onclick="saveWriting()">本文を保存</button>
+    <span id="saveStatus" class="muted" aria-live="polite"></span>
+  </div>
+  <p class="muted">※入力内容は自動保存されます。作品と章を選択して執筆してください。</p>
+</section>
+
+<section id="chat" class="section">
+  <div class="section-head"><h2>Roleplay Chat</h2></div>
+  <div class="field">
+    <label for="chatWork">作品</label>
+    <select id="chatWork"></select>
+  </div>
+  <div class="field">
+    <label for="chatCharacter">相手のキャラクター</label>
+    <select id="chatCharacter"></select>
+  </div>
+  <div id="chatBox" class="chat-box"></div>
+  <div class="field">
+    <label for="chatMode">投稿者</label>
+    <select id="chatMode">
+      <option value="user">あなた</option>
+      <option value="character">キャラクター</option>
+      <option value="note">メモ</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="chatInput">メッセージ</label>
+    <textarea id="chatInput" placeholder="会話やロールプレイの文章を記録……"></textarea>
+  </div>
+  <button class="btn primary" onclick="sendChat()">会話を記録</button>
+  <button class="btn" onclick="exportChat()">会話を書き出す</button>
+</section>
+
+<section id="settings" class="section">
+  <div class="section-head"><h2>Library Settings</h2></div>
+  <div class="card">
+    <h3>データのバックアップ</h3>
+    <p>作品・人物・章・本文・会話履歴をJSONファイルに保存します。</p>
+    <div class="toolbar">
+      <button class="btn primary" onclick="backup()">バックアップを保存</button>
+      <button class="btn" onclick="document.getElementById('restoreFile').click()">バックアップを復元</button>
+      <input id="restoreFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </div>
+  <hr>
+  <div class="card">
+    <h3>保存について</h3>
+    <p>データはこのブラウザ内に保存されます。ブラウザのデータ消去や端末変更に備えて、定期的にバックアップしてください。</p>
+  </div>
+  <hr>
+  <button class="btn danger" onclick="clearAll()">すべてのデータを削除</button>
+</section>
+
+<footer>✦ A PRIVATE LIBRARY FOR YOUR IMAGINATION ✦</footer>
 </div>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <h2 id="modalTitle">登録</h2>
+    <form id="modalForm">
+      <div id="modalFields"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn" onclick="closeModal()">キャンセル</button>
+        <button type="submit" class="btn primary">保存する</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
-const DB_NAME='RoleplayStoryDB', DB_VERSION=1;
-let db;
-let useLocalStorage=false;
-const stores=['works','characters','chapters','messages'];
-const localKey=store=>'roleplay_story_v1_'+store;
-function openDB(){
-  return new Promise((resolve,reject)=>{
-    if(!('indexedDB' in window)){useLocalStorage=true;resolve(null);return;}
-    let req;
-    try{req=indexedDB.open(DB_NAME,DB_VERSION);}catch(e){useLocalStorage=true;resolve(null);return;}
-    req.onupgradeneeded=()=>{const d=req.result;for(const s of stores){if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});}};
-    req.onsuccess=()=>{db=req.result;resolve(db)};
-    req.onerror=()=>{useLocalStorage=true;resolve(null)};
-    req.onblocked=()=>{useLocalStorage=true;resolve(null)};
+"use strict";
+
+const STORAGE_KEY = "gothic-library-v2";
+
+const emptyData = () => ({
+  works: [],
+  characters: [],
+  chapters: [],
+  messages: []
+});
+
+let data = loadData();
+let editing = null;
+let currentEditorId = "";
+let autoSaveTimer = null;
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return emptyData();
+    const parsed = JSON.parse(raw);
+    return {
+      works:Array.isArray(parsed.works)?parsed.works:[],
+      characters:Array.isArray(parsed.characters)?parsed.characters:[],
+      chapters:Array.isArray(parsed.chapters)?parsed.chapters:[],
+      messages:Array.isArray(parsed.messages)?parsed.messages:[]
+    };
+  }catch(error){
+    alert("保存データを読み込めませんでした。バックアップファイルがあれば復元してください。");
+    return emptyData();
+  }
+}
+
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    return true;
+  }catch(error){
+    alert("保存できませんでした。端末の空き容量やブラウザ設定を確認してください。");
+    return false;
+  }
+}
+
+function uid(){
+  return "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2,9);
+}
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function byId(id){
+  return document.getElementById(id);
+}
+
+function showTab(tab){
+  const target = byId(tab);
+  if(!target) return;
+  document.querySelectorAll(".section").forEach(el=>el.classList.remove("active"));
+  target.classList.add("active");
+  document.querySelectorAll("nav button").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.tab===tab);
+  });
+  refresh();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>showTab(btn.dataset.tab));
+});
+
+function openModal(title,fields,onSave){
+  byId("modalTitle").textContent=title;
+  byId("modalFields").innerHTML=fields;
+  byId("modal").classList.add("open");
+  editing=onSave;
+}
+
+function closeModal(){
+  byId("modal").classList.remove("open");
+  byId("modalFields").innerHTML="";
+  editing=null;
+}
+
+byId("modal").addEventListener("click",e=>{
+  if(e.target===byId("modal")) closeModal();
+});
+
+byId("modalForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(typeof editing!=="function") return;
+  const values={};
+  byId("modalFields").querySelectorAll("[name]").forEach(el=>{
+    values[el.name]=el.value.trim();
+  });
+  editing(values);
+  closeModal();
+  refresh();
+});
+
+function field(name,label,value="",type="text",placeholder=""){
+  return `<div class="field">
+    <label for="f-${name}">${esc(label)}</label>
+    <input id="f-${name}" name="${name}" type="${type}"
+      value="${esc(value)}" placeholder="${esc(placeholder)}">
+  </div>`;
+}
+
+function area(name,label,value="",placeholder=""){
+  return `<div class="field">
+    <label for="f-${name}">${esc(label)}</label>
+    <textarea id="f-${name}" name="${name}" placeholder="${esc(placeholder)}">${esc(value)}</textarea>
+  </div>`;
+}
+
+function selectField(name,label,items,selected=""){
+  return `<div class="field">
+    <label for="f-${name}">${esc(label)}</label>
+    <select id="f-${name}" name="${name}">
+      <option value="">選択してください</option>
+      ${items.map(x=>`<option value="${esc(x.id)}" ${x.id===selected?"selected":""}>${esc(x.name)}</option>`).join("")}
+    </select>
+  </div>`;
+}
+
+function newWork(id=null){
+  const old=id?data.works.find(x=>x.id===id):null;
+  const fields=
+    field("name","作品タイトル",old?.name||"","text","作品名")+
+    field("genre","ジャンル",old?.genre||"","text","夢小説・恋愛・ファンタジーなど")+
+    field("world","世界観",old?.world||"","text","物語の舞台")+
+    area("memo","作品メモ",old?.memo||"","あらすじや設定など");
+  openModal(old?"作品を編集":"新しい作品",fields,v=>{
+    if(!v.name){alert("作品タイトルを入力してください。");return;}
+    if(old) Object.assign(old,v,{updated:Date.now()});
+    else data.works.push({id:uid(),...v,created:Date.now(),updated:Date.now()});
+    saveData();
   });
 }
-function all(store){
-  if(useLocalStorage){try{return Promise.resolve(JSON.parse(localStorage.getItem(localKey(store))||'[]'));}catch(e){return Promise.reject(e)}}
-  return new Promise((res,rej)=>{const r=db.transaction(store).objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
-}
-function put(store,obj){
-  if(useLocalStorage){try{const a=JSON.parse(localStorage.getItem(localKey(store))||'[]');const i=a.findIndex(x=>x.id===obj.id);if(i>=0)a[i]=obj;else a.push(obj);localStorage.setItem(localKey(store),JSON.stringify(a));return Promise.resolve(obj);}catch(e){return Promise.reject(e)}}
-  return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).put(obj);r.onsuccess=()=>res(obj);r.onerror=()=>rej(r.error)});
-}
-function del(store,itemId){
-  if(useLocalStorage){try{const a=JSON.parse(localStorage.getItem(localKey(store))||'[]').filter(x=>x.id!==itemId);localStorage.setItem(localKey(store),JSON.stringify(a));return Promise.resolve();}catch(e){return Promise.reject(e)}}
-  return new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).delete(itemId);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
-}
-const id=()=>crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const $=s=>document.querySelector(s);
-let activeTab='home';
-function showTab(tab){activeTab=tab;document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===tab));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));refresh();window.scrollTo(0,0)}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
-async function refresh(){
- const [works,chars,chapters]=await Promise.all([all('works'),all('characters'),all('chapters')]);
- $('#homeStats').innerHTML=[['作品',works.length],['キャラクター',chars.length],['章・エピソード',chapters.length]].map(([a,b])=>`<div class="card"><p>${a}</p><div style="font:28px Georgia;color:var(--gold)">${b}</div></div>`).join('');
- $('#recentWorks').innerHTML=works.length?works.slice(-4).reverse().map(w=>workCard(w)).join(''):'<div class="empty">まだ作品がありません。<br>最初の物語を作りましょう。</div>';
- $('#worksList').innerHTML=works.length?works.map(w=>workCard(w,true)).join(''):'<div class="empty">作品を作成すると、ここに並びます。</div>';
- $('#charactersList').innerHTML=chars.length?chars.map(c=>`<article class="card">${c.image?`<img src="${c.image}" alt="${esc(c.name)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:10px">`:''}<h3>${esc(c.name)}</h3><span class="badge">${esc((works.find(w=>w.id===c.workId)||{}).name||'作品未設定')}</span><p>${esc(c.age)} ${esc(c.appearance)}</p><p>${esc(c.personality)}</p><div class="actions"><button class="btn small" onclick="editCharacter('${c.id}')">編集</button><button class="btn small danger" onclick="removeItem('characters','${c.id}')">削除</button></div></article>`).join(''):'<div class="empty">キャラクターはまだいません。</div>';
- const filter=$('#chapterWorkFilter').value;
- const filtered=chapters.filter(c=>!filter||c.workId===filter);
- $('#chaptersList').innerHTML=filtered.length?filtered.map(c=>`<div class="item"><div><strong>${esc(c.chapterNumber?'Chapter '+c.chapterNumber+' · ':'')}${esc(c.episodeNumber?'Episode '+c.episodeNumber+' · ':'')}${esc(c.title)}</strong><small>${esc((works.find(w=>w.id===c.workId)||{}).name||'作品不明')} · ${esc((c.body||'').slice(0,75))}</small></div><div class="row" style="flex:0"><button class="btn small" onclick="editChapter('${c.id}')">編集</button><button class="btn small danger" onclick="removeItem('chapters','${c.id}')">削除</button></div></div>`).join(''):'<div class="empty">章・エピソードはまだありません。</div>';
- fillSelect('#characterWork',works);fillSelect('#chapterWork',works);fillSelect('#chatWork',works);fillSelect('#chapterWorkFilter',works,true);
- const selected=$('#chatWork').value; const chatChars=chars.filter(c=>c.workId===selected); const old=$('#chatCharacter').value;
- $('#chatCharacter').innerHTML='<option value="">自由執筆</option>'+chatChars.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('#chatCharacter').value=old;
- await renderMessages();
-}
-function fillSelect(sel,works,keepAll=false){const el=$(sel),old=el.value;el.innerHTML=(keepAll?'<option value="">すべての作品</option>':'')+works.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old}
-function workCard(w,editable=false){return `<article class="card"><div class="story-title">${esc(w.name)}</div><div class="badge">${esc(w.genre||'ジャンル未設定')}</div><p>${esc(w.world||'世界観未設定')}</p>${editable?`<div class="actions"><button class="btn small primary" onclick="openWork('${w.id}')">執筆する</button><button class="btn small" onclick="editWork('${w.id}')">編集</button><button class="btn small danger" onclick="removeItem('works','${w.id}')">削除</button></div>`:''}</article>`}
 
-function openForm(id){
-  const el = document.getElementById(id);
-  if (!el) {
-    console.error('フォームが見つかりません:', id);
+function newCharacter(id=null){
+  const old=id?data.characters.find(x=>x.id===id):null;
+  const fields=
+    selectField("workId","所属作品",data.works.map(w=>({id:w.id,name:w.name})),old?.workId||"")+
+    field("name","名前",old?.name||"")+
+    field("age","年齢",old?.age||"")+
+    area("appearance","容姿",old?.appearance||"")+
+    area("personality","性格",old?.personality||"")+
+    area("speech","口調・話し方",old?.speech||"")+
+    area("relations","人間関係",old?.relations||"")+
+    area("memo","その他の設定",old?.memo||"");
+  openModal(old?"人物を編集":"新しい人物",fields,v=>{
+    if(!v.name){alert("名前を入力してください。");return;}
+    if(old) Object.assign(old,v);
+    else data.characters.push({id:uid(),...v,created:Date.now()});
+    saveData();
+  });
+}
+
+function newChapter(id=null){
+  const old=id?data.chapters.find(x=>x.id===id):null;
+  const fields=
+    selectField("workId","作品",data.works.map(w=>({id:w.id,name:w.name})),old?.workId||"")+
+    field("chapterNumber","章番号",old?.chapterNumber||"1","number")+
+    field("episodeNumber","話数",old?.episodeNumber||"1","number")+
+    field("title","章・エピソードのタイトル",old?.title||"")+
+    area("body","本文",old?.body||"","本文を入力できます。");
+  openModal(old?"章・話を編集":"新しい章・話",fields,v=>{
+    if(!v.workId){alert("作品を選択してください。");return;}
+    if(!v.title){alert("タイトルを入力してください。");return;}
+    if(old) Object.assign(old,v,{updated:Date.now()});
+    else data.chapters.push({id:uid(),...v,created:Date.now(),updated:Date.now()});
+    saveData();
+  });
+}
+
+function removeItem(type,id){
+  if(!confirm("このデータを削除しますか？この操作は取り消せません。")) return;
+  if(type==="works"){
+    data.works=data.works.filter(x=>x.id!==id);
+    data.characters=data.characters.filter(x=>x.workId!==id);
+    data.chapters=data.chapters.filter(x=>x.workId!==id);
+    data.messages=data.messages.filter(x=>x.workId!==id);
+  }else if(type==="characters"){
+    data.characters=data.characters.filter(x=>x.id!==id);
+  }else if(type==="chapters"){
+    data.chapters=data.chapters.filter(x=>x.id!==id);
+  }
+  saveData();
+  refresh();
+}
+
+function workName(id){
+  return data.works.find(x=>x.id===id)?.name||"所属作品なし";
+}
+
+function workCard(w){
+  const count=data.chapters.filter(c=>c.workId===w.id).length;
+  const chars=data.characters.filter(c=>c.workId===w.id).length;
+  return `<article class="card">
+    <h3>${esc(w.name)}</h3>
+    <span class="muted">${esc(w.genre||"ジャンル未設定")}</span>
+    <p>${esc(w.world||"世界観未設定")}</p>
+    <p>人物 ${chars}名 · 章・話 ${count}件</p>
+    <div class="card-actions">
+      <button class="btn small primary" onclick="openWriting('${w.id}')">執筆する</button>
+      <button class="btn small" onclick="newWork('${w.id}')">編集</button>
+      <button class="btn small danger" onclick="removeItem('works','${w.id}')">削除</button>
+    </div>
+  </article>`;
+}
+
+function characterCard(c){
+  return `<article class="card">
+    <h3>${esc(c.name)}</h3>
+    <span class="muted">${esc(workName(c.workId))}</span>
+    <p>年齢：${esc(c.age||"未設定")}</p>
+    <p>${esc(c.personality||"性格未設定")}</p>
+    <div class="card-actions">
+      <button class="btn small" onclick="newCharacter('${c.id}')">編集</button>
+      <button class="btn small danger" onclick="removeItem('characters','${c.id}')">削除</button>
+    </div>
+  </article>`;
+}
+
+function chapterCard(c){
+  return `<article class="card">
+    <h3>${esc(c.title)}</h3>
+    <span class="muted">${esc(workName(c.workId))}</span>
+    <p>第${esc(c.chapterNumber||"1")}章 · 第${esc(c.episodeNumber||"1")}話</p>
+    <p>${esc((c.body||"本文はまだありません。").slice(0,90))}</p>
+    <div class="card-actions">
+      <button class="btn small primary" onclick="openWriting('${c.workId}','${c.id}')">執筆する</button>
+      <button class="btn small" onclick="newChapter('${c.id}')">編集</button>
+      <button class="btn small danger" onclick="removeItem('chapters','${c.id}')">削除</button>
+    </div>
+  </article>`;
+}
+
+function fillSelect(id,items,placeholder,selected=""){
+  const el=byId(id);
+  if(!el) return;
+  const old=selected||el.value;
+  el.innerHTML=`<option value="">${esc(placeholder)}</option>`+
+    items.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join("");
+  if(items.some(x=>x.id===old)) el.value=old;
+}
+
+function refresh(){
+  byId("statWorks").textContent=data.works.length;
+  byId("statChars").textContent=data.characters.length;
+  byId("statChapters").textContent=data.chapters.length;
+
+  byId("worksList").innerHTML=data.works.length?
+    data.works.map(workCard).join(""):'<div class="empty">作品を作成すると、ここに並びます。</div>';
+
+  byId("recentWorks").innerHTML=data.works.length?
+    [...data.works].slice(-4).reverse().map(workCard).join(""):'<div class="empty">まだ作品がありません。</div>';
+
+  byId("charactersList").innerHTML=data.characters.length?
+    data.characters.map(characterCard).join(""):'<div class="empty">人物を登録しましょう。</div>';
+
+  const filter=byId("chapterFilter").value;
+  fillSelect("chapterFilter",data.works.map(w=>({id:w.id,name:w.name})),"すべての作品",filter);
+  const filtered=data.chapters.filter(c=>!byId("chapterFilter").value||c.workId===byId("chapterFilter").value);
+  byId("chaptersList").innerHTML=filtered.length?
+    filtered.map(chapterCard).join(""):'<div class="empty">章・エピソードはまだありません。</div>';
+
+  fillSelect("writeWork",data.works.map(w=>({id:w.id,name:w.name})),"作品を選択");
+  fillSelect("chatWork",data.works.map(w=>({id:w.id,name:w.name})),"作品を選択");
+  updateChapterSelect();
+  updateChatCharacters();
+}
+
+function updateChapterSelect(){
+  const workId=byId("writeWork").value;
+  const items=data.chapters.filter(c=>c.workId===workId).map(c=>({
+    id:c.id,name:`第${c.chapterNumber}章・第${c.episodeNumber}話 ${c.title}`
+  }));
+  fillSelect("writeChapter",items,"章・エピソードを選択");
+}
+
+function updateChatCharacters(){
+  const workId=byId("chatWork").value;
+  const chars=data.characters.filter(c=>c.workId===workId);
+  fillSelect("chatCharacter",chars.map(c=>({id:c.id,name:c.name})),"キャラクターを選択");
+  renderMessages();
+}
+
+byId("chapterFilter").addEventListener("change",refresh);
+byId("writeWork").addEventListener("change",()=>{
+  updateChapterSelect();
+  loadWriting();
+});
+byId("writeChapter").addEventListener("change",loadWriting);
+byId("chatWork").addEventListener("change",updateChatCharacters);
+byId("chatCharacter").addEventListener("change",renderMessages);
+
+function openWriting(workId,chapterId=""){
+  showTab("writer");
+  byId("writeWork").value=workId;
+  updateChapterSelect();
+  byId("writeChapter").value=chapterId;
+  loadWriting();
+}
+
+function loadWriting(){
+  const id=byId("writeChapter").value;
+  const chapter=data.chapters.find(c=>c.id===id);
+  currentEditorId=id;
+  byId("editorTitle").value=chapter?.title||"";
+  byId("editor").value=chapter?.body||"";
+  byId("saveStatus").textContent=chapter?"保存済み":"新規執筆";
+}
+
+function saveWriting(){
+  const id=byId("writeChapter").value;
+  const chapter=data.chapters.find(c=>c.id===id);
+  if(!chapter){
+    alert("先に作品と章・エピソードを作成してください。");
     return;
   }
-  el.classList.remove('hidden');
+  chapter.title=byId("editorTitle").value.trim()||"無題";
+  chapter.body=byId("editor").value;
+  chapter.updated=Date.now();
+  saveData();
+  byId("saveStatus").textContent="保存しました";
+  refresh();
 }
 
-function closeForm(id){
-  const el = document.getElementById(id);
-  if (!el) {
-    console.error('フォームが見つかりません:', id);
-    return;
+function autoSaveWriting(){
+  clearTimeout(autoSaveTimer);
+  byId("saveStatus").textContent="保存中……";
+  autoSaveTimer=setTimeout(()=>{
+    const id=byId("writeChapter").value;
+    const chapter=data.chapters.find(c=>c.id===id);
+    if(!chapter) return;
+    chapter.title=byId("editorTitle").value.trim()||"無題";
+    chapter.body=byId("editor").value;
+    chapter.updated=Date.now();
+    if(saveData()) byId("saveStatus").textContent="自動保存済み";
+  },800);
+}
+
+byId("editor").addEventListener("input",autoSaveWriting);
+byId("editorTitle").addEventListener("input",autoSaveWriting);
+
+function sendChat(){
+  const workId=byId("chatWork").value;
+  const text=byId("chatInput").value.trim();
+  if(!workId){alert("作品を選択してください。");return;}
+  if(!text){alert("メッセージを入力してください。");return;}
+  data.messages.push({
+    id:uid(),workId,
+    characterId:byId("chatCharacter").value,
+    role:byId("chatMode").value,
+    text,time:Date.now()
+  });
+  byId("chatInput").value="";
+  saveData();
+  renderMessages();
+}
+
+function renderMessages(){
+  const workId=byId("chatWork").value;
+  const characterId=byId("chatCharacter").value;
+  const messages=data.messages.filter(m=>
+    m.workId===workId&&(!characterId||m.characterId===characterId)
+  );
+  byId("chatBox").innerHTML=messages.length?messages.map(m=>{
+    const c=data.characters.find(x=>x.id===m.characterId);
+    const name=m.role==="user"?"あなた":m.role==="note"?"メモ":c?.name||"キャラクター";
+    const cls=m.role==="user"?"user":"character";
+    return `<div class="message ${cls}">
+      <small>${esc(name)} · ${new Date(m.time).toLocaleString("ja-JP")}</small>
+      ${esc(m.text)}
+    </div>`;
+  }).join(""):'<p class="muted">この作品の会話履歴はまだありません。</p>';
+  byId("chatBox").scrollTop=byId("chatBox").scrollHeight;
+}
+
+function exportChat(){
+  const workId=byId("chatWork").value;
+  if(!workId){alert("作品を選択してください。");return;}
+  const messages=data.messages.filter(m=>m.workId===workId);
+  const lines=messages.map(m=>{
+    const c=data.characters.find(x=>x.id===m.characterId);
+    const name=m.role==="user"?"あなた":m.role==="note"?"メモ":c?.name||"キャラクター";
+    return `[${new Date(m.time).toLocaleString("ja-JP")}] ${name}\n${m.text}`;
+  });
+  downloadFile("conversation.txt",lines.join("\n\n"),"text/plain;charset=utf-8");
+}
+
+function downloadFile(name,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function backup(){
+  const json=JSON.stringify({
+    version:2,exportedAt:new Date().toISOString(),data
+  },null,2);
+  downloadFile("gothic-library-backup.json",json,"application/json");
+}
+
+byId("restoreFile").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];
+  if(!file)return;
+  try{
+    const parsed=JSON.parse(await file.text());
+    const incoming=parsed.data||parsed;
+    if(!incoming||!Array.isArray(incoming.works)||
+       !Array.isArray(incoming.characters)||!Array.isArray(incoming.chapters)){
+      throw new Error("形式が違います");
+    }
+    if(!confirm("現在のデータをバックアップの内容に置き換えますか？"))return;
+    data={
+      works:incoming.works,
+      characters:incoming.characters,
+      chapters:incoming.chapters,
+      messages:Array.isArray(incoming.messages)?incoming.messages:[]
+    };
+    if(saveData()){refresh();alert("復元しました。");}
+  }catch(error){
+    alert("バックアップを読み込めませんでした。正しいJSONファイルを選んでください。");
+  }finally{
+    e.target.value="";
   }
-  el.classList.add('hidden');
+});
+
+function clearAll(){
+  if(!confirm("すべての作品・人物・章・会話履歴を削除しますか？"))return;
+  if(!confirm("本当に削除しますか？先にバックアップをおすすめします。"))return;
+  data=emptyData();
+  saveData();
+  refresh();
+  alert("データを削除しました。");
 }
 
-$('#newWork').onclick=()=>{ $('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
-$('#newWorkTop').onclick=()=>{showTab('works');$('#workForm').reset();$('#workId').value='';$('#workFormTitle').textContent='新しい作品';openForm('workFormWrap')};
-$('#workForm').onsubmit=async e=>{e.preventDefault();const wid=$('#workId').value;await put('works',{id:wid||id(),name:$('#workName').value.trim(),genre:$('#workGenre').value,world:$('#workWorld').value,memo:$('#workMemo').value,updated:Date.now()});closeForm('workFormWrap');e.target.reset();refresh()};
-window.editWork=async wid=>{const w=(await all('works')).find(x=>x.id===wid);if(!w)return;$('#workId').value=w.id;$('#workName').value=w.name;$('#workGenre').value=w.genre;$('#workWorld').value=w.world;$('#workMemo').value=w.memo;$('#workFormTitle').textContent='作品を編集';openForm('workFormWrap')};
-window.openWork=wid=>{$('#chatWork').value=wid;showTab('chat')};
-$('#newCharacter').onclick=async()=>{ $('#characterForm').reset();$('#characterId').value='';$('#characterFormTitle').textContent='キャラクター作成';await refresh();openForm('characterFormWrap')};
-$('#characterForm').onsubmit=async e=>{e.preventDefault();const cid=$('#characterId').value;const old=cid?(await all('characters')).find(c=>c.id===cid):null;let image=old?.image||'';const file=$('#characterImage').files[0];if(file){image=await new Promise(resolve=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(file)})}
- await put('characters',{id:cid||id(),workId:$('#characterWork').value,name:$('#characterName').value,age:$('#characterAge').value,appearance:$('#characterAppearance').value,personality:$('#characterPersonality').value,speech:$('#characterSpeech').value,past:$('#characterPast').value,relations:$('#characterRelations').value,image});closeForm('characterFormWrap');e.target.reset();refresh()};
-window.editCharacter=async cid=>{const c=(await all('characters')).find(x=>x.id===cid);if(!c)return;await refresh();$('#characterId').value=c.id;$('#characterWork').value=c.workId;$('#characterName').value=c.name;$('#characterAge').value=c.age;$('#characterAppearance').value=c.appearance;$('#characterPersonality').value=c.personality;$('#characterSpeech').value=c.speech;$('#characterPast').value=c.past;$('#characterRelations').value=c.relations;$('#characterFormTitle').textContent='キャラクター編集';openForm('characterFormWrap')};
-$('#newChapter').onclick=async()=>{$('#chapterForm').reset();$('#chapterId').value='';$('#chapterFormTitle').textContent='章・エピソード作成';await refresh();openForm('chapterFormWrap')};
-$('#chapterForm').onsubmit=async e=>{e.preventDefault();const cid=$('#chapterId').value;await put('chapters',{id:cid||id(),workId:$('#chapterWork').value,chapterNumber:$('#chapterNumber').value,episodeNumber:$('#episodeNumber').value,title:$('#chapterTitle').value,body:$('#chapterBody').value,updated:Date.now()});closeForm('chapterFormWrap');e.target.reset();refresh()};
-window.editChapter=async cid=>{const c=(await all('chapters')).find(x=>x.id===cid);if(!c)return;$('#chapterId').value=c.id;$('#chapterWork').value=c.workId;$('#chapterNumber').value=c.chapterNumber;$('#episodeNumber').value=c.episodeNumber;$('#chapterTitle').value=c.title;$('#chapterBody').value=c.body;$('#chapterFormTitle').textContent='章・エピソード編集';openForm('chapterFormWrap')};
-window.removeItem=async(store,itemId)=>{if(!confirm('削除しますか？この操作は取り消せません。'))return;await del(store,itemId);refresh()};
-document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>closeForm(b.dataset.cancel));
-$('#chapterWorkFilter').onchange=refresh;$('#chatWork').onchange=refresh;
-async function renderMessages(){const wid=$('#chatWork').value;if(!wid){$('#chatBox').innerHTML='<div class="bubble system">先に作品を作成してください。</div>';return}const msgs=(await all('messages')).filter(m=>m.workId===wid);$('#chatBox').innerHTML=msgs.length?msgs.map(m=>`<div class="bubble ${m.role==='user'?'user':'note'}"><small style="opacity:.65">${m.role==='user'?'あなた':'執筆メモ'} · ${new Date(m.time).toLocaleString('ja-JP')}</small><br>${esc(m.text)}</div>`).join(''):'<div class="bubble system">この作品の会話履歴はまだありません。</div>';$('#chatBox').scrollTop=$('#chatBox').scrollHeight}
-$('#sendChat').onclick=async()=>{const wid=$('#chatWork').value,text=$('#chatInput').value.trim();if(!wid){alert('先に作品を作成してください。');return}if(!text)return;const cId=$('#chatCharacter').value;const c=cId?(await all('characters')).find(x=>x.id===cId):null;const mode=$('#chatMode').value;await put('messages',{id:id(),workId:wid,characterId:cId||'',role:'user',mode,text:(mode==='novel'?'【小説本文】\n':'')+(c?'【相手：'+c.name+'】\n':'')+text,time:Date.now()});$('#chatInput').value='';renderMessages()};
-$('#exportChat').onclick=async()=>{const wid=$('#chatWork').value;if(!wid)return;const w=(await all('works')).find(x=>x.id===wid);const msgs=(await all('messages')).filter(m=>m.workId===wid);download(`${w?.name||'story'}_chat.txt`,msgs.map(m=>`[${new Date(m.time).toLocaleString('ja-JP')}] ${m.role==='user'?'あなた':'メモ'}\n${m.text}`).join('\n\n'))};
-$('#clearChat').onclick=async()=>{const wid=$('#chatWork').value;if(!wid||!confirm('この作品の会話履歴をすべて削除しますか？'))return;const msgs=(await all('messages')).filter(m=>m.workId===wid);for(const m of msgs)await del('messages',m.id);renderMessages()};
-function download(name,content,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-$('#backup').onclick=async()=>{const data={version:1,exportedAt:new Date().toISOString()};for(const s of stores)data[s]=await all(s);download('roleplay-story-backup.json',JSON.stringify(data,null,2),'application/json')};
-$('#restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!confirm('バックアップ内のデータを追加しますか？同じIDのデータは上書きされます。'))return;for(const s of stores)for(const x of (data[s]||[]))await put(s,x);alert('読み込みました。');refresh()}catch(err){alert('ファイルを読み込めませんでした。')}e.target.value=''};
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-window.addEventListener('error',e=>{alert('アプリ内でエラーが発生しました：'+(e.message||'不明なエラー'));});
-window.addEventListener('unhandledrejection',e=>{alert('保存または読み込みに失敗しました。Safariの通常タブで開き直して、もう一度お試しください。');});
-(async()=>{try{await openDB();const mode=$('#storageMode');if(mode)mode.textContent=useLocalStorage?'保存方式：Safari内の簡易保存':'保存方式：IndexedDB';await refresh();}catch(e){console.error(e);alert('データ保存領域を初期化できませんでした。Safariの通常タブで開き直してください。');}})();
+refresh();
 </script>
 </body>
 </html>
